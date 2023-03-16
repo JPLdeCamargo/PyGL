@@ -7,3 +7,8 @@ class ABCObject(ABC):
     @abstractmethod
     def coords(self) -> list[Coords2d]:
         pass
+
+    @property
+    @abstractmethod
+    def is_closed(self) -> bool:
+        pass

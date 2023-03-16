@@ -9,6 +9,7 @@ from PyQt5.QtGui     import *
 from PyQt5.QtCore    import *
 from PyQt5.QtWidgets import *
 
+import math
 
 class Viewport(QWidget):
     def __init__(self, max_x:int, max_y:int, window:Window) -> None:
@@ -22,23 +23,30 @@ class Viewport(QWidget):
 
     def world_to_screen_coords(self) -> list[ABCObject]:
         viewport_objs = []
-        boundry_coord = Coords2d(self.__max_x - self.__min_x, self.__max_y - self.__min_y)
         world_objs_coords = self.__window.display_file
         for obj in world_objs_coords:
+
+            # Transforming window coords into viewport coords
             viewport_coords = []
             for coord in obj.coords:
-                unit = self.__transform_into_unitary(coord)
-                viewport_coords.append(unit * boundry_coord)
+                transformed = self.__transform_to_viewport(coord)
+                viewport_coords.append(transformed)
 
-            # change later
-            if len(viewport_coords) == 2:
-                viewport_obj = Line(viewport_coords[0], viewport_coords[1])
-            else:
-                viewport_obj = WireFrame(viewport_coords)
+            if obj.is_closed:
+                transformed = self.__transform_to_viewport(obj.coords[0])
+                viewport_coords.append(transformed)
 
-            viewport_objs.append(viewport_obj)
+
+            viewport_objs.append(viewport_coords)
         return viewport_objs
             
+
+    def __transform_to_viewport(self, point:Coords2d) -> Coords2d:
+        boundry_coord = Coords2d(self.__max_x - self.__min_x, self.__max_y - self.__min_y)
+        unit = self.__transform_into_unitary(point)
+        transformed = unit * boundry_coord
+        transformed = Coords2d(math.floor(transformed.x), math.floor(transformed.y))
+        return transformed
 
                  
     # Unitary values to where the point will be
@@ -53,21 +61,17 @@ class Viewport(QWidget):
         painter.setPen(Qt.red)
 
         objs = self.world_to_screen_coords()
-        # test = [Coords2d(4, 4), Coords2d(100, 4), Coords2d(100, 100), Coords2d(4, 100)]
-        # cube = WireFrame(test)
-        # objs = [cube]
         for obj in objs:
-            for i in range(len(obj.coords)-1):
-                x = obj.coords[i].x
-                painter.drawLine(obj.coords[i].x,
-                                 obj.coords[i].y,
-                                 obj.coords[i+1].x,
-                                 obj.coords[i+1].y)
+            for i in range(len(obj)-1):
+                painter.drawLine(math.floor(obj[i].x),
+                                 math.floor(obj[i].y),
+                                 math.floor(obj[i+1].x),
+                                 math.floor(obj[i+1].y))
 
-            painter.drawLine(obj.coords[0].x,
-                             obj.coords[0].y,
-                             obj.coords[-1].x,
-                             obj.coords[-1].y)
+            painter.drawLine(math.floor(obj[0].x),
+                             math.floor(obj[0].y),
+                             math.floor(obj[-1].x),
+                             math.floor(obj[-1].y))
 
     def keyPressEvent(self, event):
         # Move window
