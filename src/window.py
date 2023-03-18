@@ -2,10 +2,10 @@ from game_objects.ABCObject import ABCObject
 from game_objects.coords2D import Coords2d
 import math
 
-from const_wireframes import basic_square, basic_line
+from const_wireframes import to_load
 class Window:
     def __init__(self, max_x:float, max_y:float) -> None:
-        self.__display_file = [basic_square, basic_line]
+        self.__display_file = to_load
         self.__max_x = max_x
         self.__max_y = max_y
         self.__min_x = 0

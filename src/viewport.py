@@ -21,6 +21,12 @@ class Viewport(QWidget):
         self.__min_y = 0
         self.__window = window
 
+        self.setAutoFillBackground(True)
+
+        palette = self.palette()
+        palette.setColor(QPalette.Window, QColor('red'))
+        self.setPalette(palette)
+
     def world_to_screen_coords(self) -> list[ABCObject]:
         viewport_objs = []
         world_objs_coords = self.__window.display_file
@@ -57,8 +63,10 @@ class Viewport(QWidget):
         return Coords2d(unit_x, unit_y)
 
     def paintEvent(self, event):
+        print(self.x)
+        print(self.y)
         painter = QPainter(self)
-        painter.setPen(Qt.red)
+        painter.setPen(Qt.black)
 
         objs = self.world_to_screen_coords()
         for obj in objs:
