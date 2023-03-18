@@ -10,10 +10,9 @@ class Window:
         self.__max_y = max_y
         self.__min_x = 0
         self.__min_y = 0
-        self.__crt_center = Coords2d(max_x//2, max_y//2)
 
-        self.__initial_x = self.__max_x
-        self.__initial_y= self.__max_y
+        self.__ratio = max_x/max_y
+
 
     @property
     def display_file(self) -> list[ABCObject]:
@@ -36,17 +35,22 @@ class Window:
         return self.__min_y
 
     def move_x(self, delta:float) -> None:
+        scale = self.__max_x - self.__min_x
+        delta = (delta * scale)/1000
         self.__max_x += delta 
         self.__min_x += delta
 
     def move_y(self, delta:float) -> None:
+        scale = self.__max_x - self.__min_x
+        delta = (delta * scale)/1000
         self.__max_y += delta 
         self.__min_y += delta
 
     def zoom(self, delta:float) -> None:
-        ratio = self.__initial_x/self.__initial_y
-        dx = delta * ratio
-        dy = delta * (1/ratio)
+        scale = self.__max_x - self.__min_x
+        delta = (delta * scale)/1000
+        dx = delta * self.__ratio
+        dy = delta
         self.__max_x += dx 
         self.__min_x -= dx 
 

@@ -63,8 +63,6 @@ class Viewport(QWidget):
         return Coords2d(unit_x, unit_y)
 
     def paintEvent(self, event):
-        print(self.x)
-        print(self.y)
         painter = QPainter(self)
         painter.setPen(Qt.black)
 
