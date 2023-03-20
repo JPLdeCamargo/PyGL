@@ -8,6 +8,7 @@ from window import Window
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
+        # Weird window size for testing zoom
         self.__window = Window(7000, 15000)
         self.__viewport = Viewport(500, 500, self.__window)
         self.__viewport.resize(500, 500)

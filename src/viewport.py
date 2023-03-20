@@ -1,10 +1,7 @@
 from window import Window
 from game_objects.coords2D import Coords2d
 from game_objects.ABCObject import ABCObject
-from game_objects.line import Line
-from game_objects.wireframe import WireFrame
 
-import sys
 from PyQt5.QtGui     import *
 from PyQt5.QtCore    import *
 from PyQt5.QtWidgets import *
@@ -68,45 +65,15 @@ class Viewport(QWidget):
 
         objs = self.world_to_screen_coords()
         for obj in objs:
+            # point
+            if len(obj) == 1:
+                # Changing pens to make point bigger, instead of only one pixel
+                painter.setPen(QPen(Qt.black, 3))
+                painter.drawPoint(math.floor(obj[0].x), math.floor(obj[0].y))
+                painter.setPen(Qt.black)
+            # Lines and WireFrames
             for i in range(len(obj)-1):
                 painter.drawLine(math.floor(obj[i].x),
                                  math.floor(obj[i].y),
                                  math.floor(obj[i+1].x),
                                  math.floor(obj[i+1].y))
-
-            painter.drawLine(math.floor(obj[0].x),
-                             math.floor(obj[0].y),
-                             math.floor(obj[-1].x),
-                             math.floor(obj[-1].y))
-
-    def keyPressEvent(self, event):
-        # Move window
-        if event.key() == Qt.Key_Right:
-            self.__window.move_x(100)
-            self.update()
-        elif event.key() == Qt.Key_Left:
-            self.__window.move_x(-100)
-            self.update()
-        elif event.key() == Qt.Key_Up:
-            self.__window.move_y(100)
-            self.update()
-        elif event.key() == Qt.Key_Down:
-            self.__window.move_y(-100)
-            self.update()
-        
-        # Zoom window
-        elif event.key() == Qt.Key_W:
-            self.__window.zoom(-100)
-            self.update()
-        elif event.key() == Qt.Key_S:
-            self.__window.zoom(100)
-            self.update()
-
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    window = Window(7000, 7000)
-    ex = Viewport(1000, 1000, window)
-    ex.resize(1000, 1000)
-    ex.show()
-    sys.exit(app.exec_())

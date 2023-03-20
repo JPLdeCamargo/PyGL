@@ -1,6 +1,4 @@
 from game_objects.ABCObject import ABCObject
-from game_objects.coords2D import Coords2d
-import math
 
 from const_wireframes import to_load
 class Window:
