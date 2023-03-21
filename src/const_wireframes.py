@@ -1,6 +1,6 @@
-from game_objects.wireframe import WireFrame
-from game_objects.line import Line
-from game_objects.point import Point
+from .game_objects.wireframe import WireFrame
+from .game_objects.line import Line
+from .game_objects.point import Point
 
 y = 2000
 x = 5000

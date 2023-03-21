@@ -1,6 +1,6 @@
-from window import Window
-from game_objects.coords2D import Coords2d
-from game_objects.ABCObject import ABCObject
+from .window import Window
+from .game_objects.coords2D import Coords2d
+from .game_objects.ABCObject import ABCObject
 
 from PyQt5.QtGui     import *
 from PyQt5.QtCore    import *
@@ -21,7 +21,7 @@ class Viewport(QWidget):
         self.setAutoFillBackground(True)
 
         palette = self.palette()
-        palette.setColor(QPalette.Window, QColor('red'))
+        palette.setColor(QPalette.Window, QColor('grey'))
         self.setPalette(palette)
 
     def world_to_screen_coords(self) -> list[ABCObject]:

@@ -1,15 +1,13 @@
-import sys
 from PyQt5.QtGui     import *
 from PyQt5.QtCore    import *
 from PyQt5.QtWidgets import *
 
-from viewport import Viewport
-from window import Window
+from .viewport import Viewport
+from .window import Window
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        # Weird window size for testing zoom
-        self.__window = Window(7000, 15000)
+        self.__window = Window(7000, 7000)
         self.__viewport = Viewport(500, 500, self.__window)
         self.__viewport.resize(500, 500)
         self.setWindowTitle("Viewport Transform")
@@ -77,10 +75,3 @@ class MainWindow(QWidget):
     def clicked_minus(self):
         self.__window.zoom(100)
         self.__viewport.update()
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    test = MainWindow()
-    test.show()
-    test.resize(500, 500)
-    sys.exit(app.exec_())

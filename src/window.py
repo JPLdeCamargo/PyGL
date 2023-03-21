@@ -1,6 +1,6 @@
-from game_objects.ABCObject import ABCObject
+from .game_objects.ABCObject import ABCObject
 
-from const_wireframes import to_load
+from .const_wireframes import to_load
 class Window:
     def __init__(self, max_x:float, max_y:float) -> None:
         self.__display_file = to_load
