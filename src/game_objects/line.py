@@ -2,7 +2,8 @@ from .coords2D import Coords2d
 from .ABCObject import ABCObject
 
 class Line(ABCObject):
-    def __init__(self, a:tuple[float], b:tuple[float]) -> None:
+    def __init__(self, name : str, a:tuple[float], b:tuple[float]) -> None:
+        super().__init__(name)
         self.__coords = [Coords2d(a[0], a[1]), Coords2d(b[0], b[1])]
 
     @property

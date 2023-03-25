@@ -3,6 +3,9 @@ from .coords2D import Coords2d
 from .cg_math import CgMath
 
 class ABCObject(ABC):
+    def __init__(self, name) -> None:
+        super().__init__()
+        self.__name = name
 
     @property
     @abstractmethod
@@ -13,6 +16,11 @@ class ABCObject(ABC):
     @abstractmethod
     def is_closed(self) -> bool:
         pass
+
+    @property
+    def name(self) -> str:
+        return self.__name
+
     
     def rotate(self, degree_angle : float):
         center = self.get_center()

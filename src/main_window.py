@@ -4,6 +4,7 @@ from PyQt5.QtWidgets import *
 
 from .viewport import Viewport
 from .window import Window
+from .transform_controller import TransformController
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -15,7 +16,7 @@ class MainWindow(QWidget):
         layout = QGridLayout()
         self.__viewport.setMinimumHeight(500)
         self.__viewport.setMinimumWidth(500)
-        layout.addWidget(self.__viewport, 0,0,8,9)
+        layout.addWidget(self.__viewport, 0,0,8,8)
         
         # Buttons
         buttons_widget = QWidget()
@@ -50,6 +51,9 @@ class MainWindow(QWidget):
         buttons_widget.setLayout(buttons_layout)
 
         layout.addWidget(buttons_widget, 9,4)
+
+        self.__transform_controller = TransformController(self.__window, self.__viewport)
+        layout.addWidget(self.__transform_controller, 4, 9)
         self.setLayout(layout)
 
     def clicked_right(self):
