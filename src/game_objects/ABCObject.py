@@ -22,9 +22,8 @@ class ABCObject(ABC):
         return self.__name
 
     
-    def rotate(self, degree_angle : float):
-        center = self.get_center()
-        matrix = self.__get_center_rotation_matrix(center, degree_angle)
+    def rotate(self, degree_angle : float, anchor : Coords2d):
+        matrix = self.__get_center_rotation_matrix(anchor, degree_angle)
 
         self.__apply_matrix_transform(matrix)
 

@@ -14,12 +14,9 @@ class TransformController(QWidget):
         self.__transform_options = TransformOptions(viewport)
 
         self.__list = QListWidget()
-        self.__obj_map = {}
         for i in range(len(self.__window.display_file)):
             name = self.__window.display_file[i].name
             self.__list.insertItem(i, name)
-            self.__obj_map[name] = self.__window.display_file[i]
-
         self.__list.clicked.connect(self.clicked_list)
 
         self.__layout = QVBoxLayout()
@@ -29,5 +26,9 @@ class TransformController(QWidget):
 
     def clicked_list(self):
         name = self.__list.currentItem().text()
-        obj = self.__obj_map[name]
+        obj = self.__window.get_obj(name)
         self.__transform_options.update(name, obj)
+
+    def update_list(self):
+        obj = self.__window.display_file[-1]
+        self.__list.insertItem(len(self.__window.display_file) - 1, obj.name)

@@ -11,6 +11,11 @@ class Window:
 
         self.__ratio = max_x/max_y
 
+        # For checking names in constant time
+        self.__names_map = {}
+        for obj in self.__display_file:
+            self.__names_map[obj.name] = obj
+
 
     @property
     def display_file(self) -> list[ABCObject]:
@@ -54,3 +59,12 @@ class Window:
 
         self.__max_y += dy
         self.__min_y -= dy
+
+    def add_to_display_file(self, obj : ABCObject):
+        self.__display_file.append(obj)
+        self.__names_map[obj.name] = obj
+
+    def get_obj(self, name : str):
+        if name in self.__names_map:
+            return self.__names_map[name]
+        return False

@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import *
 from .viewport import Viewport
 from .window import Window
 from .transform_controller import TransformController
+from .create_obj_window import CreateObjWindow
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
@@ -51,9 +52,17 @@ class MainWindow(QWidget):
         buttons_widget.setLayout(buttons_layout)
 
         layout.addWidget(buttons_widget, 9,4)
-
+        
+        # Transformations controller
         self.__transform_controller = TransformController(self.__window, self.__viewport)
         layout.addWidget(self.__transform_controller, 4, 9)
+
+        # Create Object button
+        self.__create_obj_window = None
+        create = QPushButton("Create new object")
+        create.clicked.connect(self.create_obj)
+        layout.addWidget(create, 9, 0)
+
         self.setLayout(layout)
 
     def clicked_right(self):
@@ -79,3 +88,8 @@ class MainWindow(QWidget):
     def clicked_minus(self):
         self.__window.zoom(100)
         self.__viewport.update()
+
+    def create_obj(self):
+        if self.__create_obj_window is None:
+            self.__create_obj_window = CreateObjWindow(self.__window, self.__viewport, self.__transform_controller)
+        self.__create_obj_window.show()
