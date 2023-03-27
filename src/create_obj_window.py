@@ -1,6 +1,7 @@
 from PyQt5.QtGui     import *
 from PyQt5.QtCore    import *
 from PyQt5.QtWidgets import *
+from PyQt5 import QtCore, QtWidgets
 
 from .window import Window
 from .viewport import Viewport
@@ -17,6 +18,7 @@ class CreateObjWindow(QWidget):
         self.__window = window
         self.__viewport = viewport
         self.__transform_controller = transform_controller
+        self.__color = QtCore.Qt.black
 
         self.__layout = QGridLayout()
         self.__welcome = QLabel("Select which object type you would like to create")
@@ -46,6 +48,9 @@ class CreateObjWindow(QWidget):
 
         self.__create_button = QPushButton("Create")
         self.__create_button.clicked.connect(self.create)
+        
+        self.__choose_color = QPushButton("Color")
+        self.__choose_color.clicked.connect(self.choose_color)
 
         self.__layout.addWidget(self.__welcome, 0, 0)
         self.__layout.addWidget(line_radio, 1, 0)
@@ -59,9 +64,15 @@ class CreateObjWindow(QWidget):
         self.__layout.addWidget(self.__coords_input, 4, 1, 1, 2)
         self.__layout.addWidget(self.__helper, 5, 0, 1, 3)
         self.__layout.addWidget(self.__create_button, 6, 2)
+        self.__layout.addWidget(self.__choose_color, 7, 2)
+    
 
         self.setLayout(self.__layout)
 
+    def choose_color(self):
+        color = QtWidgets.QColorDialog.getColor()
+        if color.isValid():
+            self.__color = color
 
     def create(self):
         name = self.__name_input.text()
