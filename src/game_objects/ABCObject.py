@@ -3,9 +3,10 @@ from .coords2D import Coords2d
 from .cg_math import CgMath
 
 class ABCObject(ABC):
-    def __init__(self, name) -> None:
+    def __init__(self, name: str, color : tuple[int]) -> None:
         super().__init__()
         self.__name = name
+        self.__color = color
 
     @property
     @abstractmethod
@@ -21,6 +22,9 @@ class ABCObject(ABC):
     def name(self) -> str:
         return self.__name
 
+    @property
+    def color(self) -> tuple[int]:
+        return self.__color
     
     def rotate(self, degree_angle : float, anchor : Coords2d):
         matrix = self.__get_center_rotation_matrix(anchor, degree_angle)

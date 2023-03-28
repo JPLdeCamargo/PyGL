@@ -72,7 +72,7 @@ class CreateObjWindow(QWidget):
     def choose_color(self):
         color = QtWidgets.QColorDialog.getColor()
         if color.isValid():
-            self.__color = color
+            self.__color = color.getRgb()
 
     def create(self):
         name = self.__name_input.text()
@@ -90,19 +90,19 @@ class CreateObjWindow(QWidget):
                     self.__helper.setText("Coordinates input not accepted")
                     return
                 is_closed = self.__closed_wire_checkbox.isChecked()
-                obj = WireFrame(name, is_closed, coords)
+                obj = WireFrame(name, is_closed, coords, self.__color)
 
             elif self.__type == ObjTypes.LINE:
                 if len(coords) != 2:
                     self.__helper.setText("Coordinates input not accepted")
                     return
-                obj = Line(name, coords[0], coords[1])
+                obj = Line(name, coords[0], coords[1], self.__color)
                 
             elif self.__type == ObjTypes.POINT:
                 if len(coords) != 1:
                     self.__helper.setText("Coordinates input not accepted")
                     return
-                obj = Point(name, coords[0])
+                obj = Point(name, coords[0], self.__color)
 
             self.__window.add_to_display_file(obj)
             self.__viewport.update()

@@ -24,13 +24,16 @@ class Viewport(QWidget):
         palette.setColor(QPalette.Window, QColor('grey'))
         self.setPalette(palette)
 
-    def world_to_screen_coords(self) -> list[ABCObject]:
+    # Return a tuple, first = coords list, second = colors list
+    def world_to_screen_coords(self):
         viewport_objs = []
+        colors = []
         world_objs_coords = self.__window.display_file
         for obj in world_objs_coords:
 
             # Transforming window coords into viewport coords
             viewport_coords = []
+            colors.append(obj.color)
             for coord in obj.coords:
                 transformed = self.__transform_to_viewport(coord)
                 viewport_coords.append(transformed)
@@ -41,7 +44,7 @@ class Viewport(QWidget):
 
 
             viewport_objs.append(viewport_coords)
-        return viewport_objs
+        return (viewport_objs, colors)
             
 
     def __transform_to_viewport(self, point:Coords2d) -> Coords2d:
@@ -64,7 +67,10 @@ class Viewport(QWidget):
         painter.setPen(Qt.black)
 
         objs = self.world_to_screen_coords()
-        for obj in objs:
+        for i in range(len(objs[0])):
+            obj = objs[0][i]
+            color = objs[1][i]
+            painter.setPen(QColor(color[0], color[1], color[2]))
             # point
             if len(obj) == 1:
                 # Changing pens to make point bigger, instead of only one pixel

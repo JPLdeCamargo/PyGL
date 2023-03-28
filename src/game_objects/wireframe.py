@@ -2,8 +2,8 @@ from .coords2D import Coords2d
 from .ABCObject import ABCObject
 
 class WireFrame(ABCObject):
-    def __init__(self, name : str, is_closed:bool, raw_coords: list[tuple[float]]) -> None:
-        super().__init__(name)
+    def __init__(self, name : str, is_closed:bool, raw_coords: list[tuple[float]], color=(0, 0, 0)) -> None:
+        super().__init__(name, color)
         # List with every point of the polygon
         # order matters, first point connect to the second one
         # last point connected to the first one
