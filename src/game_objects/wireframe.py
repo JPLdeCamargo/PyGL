@@ -3,19 +3,16 @@ from .ABCObject import ABCObject
 
 class WireFrame(ABCObject):
     def __init__(self, name : str, is_closed:bool, raw_coords: list[tuple[float]], color=(0, 0, 0)) -> None:
-        super().__init__(name, color)
         # List with every point of the polygon
         # order matters, first point connect to the second one
         # last point connected to the first one
-        self.__coords = []
+        coords = []
         for point in raw_coords:
-            self.__coords.append(Coords2d(point[0], point[1]))
+            coords.append(Coords2d(point[0], point[1]))
         
-        self.__is_closed = is_closed
+        super().__init__(name, color, coords)
 
-    @property
-    def coords(self) -> list[Coords2d]:
-        return self.__coords
+        self.__is_closed = is_closed
 
     @property
     def is_closed(self) -> bool:

@@ -10,6 +10,9 @@ class ABCObject(ABC):
         self.__coords = coords
         self.__normalized_coords = []
 
+        # Used for calculating normalized coordinates after transformations
+        self.__last_normalized_m = None
+
     @property
     def coords(self) -> list[Coords2d]:
         return self.__coords
@@ -33,6 +36,7 @@ class ABCObject(ABC):
 
     def update_normalized(self, normalized_m:list[list[float]]):
         self.__normalized_coords = []
+        self.__last_normalized_m = normalized_m
         for point in self.coords:
             homogenous = [[point.x, point.y, 1]]
             transformed = CgMath.matrix_multiply(homogenous, normalized_m)
@@ -67,14 +71,7 @@ class ABCObject(ABC):
             self.__coords[i].y = transformed[0][1]
 
             if len(self.__normalized_coords) != 0:
-                norm_point = self.__normalized_coords[i]
-
-                homogenous = [[norm_point.x, norm_point.y, 1]]
-                transformed = CgMath.matrix_multiply(homogenous, matrix)
-                norm_point.x = transformed[0][0]
-                self.__normalized_coords[i].x = transformed[0][0]
-                self.__normalized_coords[i].y = transformed[0][1]
-
+                self.update_normalized(self.__last_normalized_m)
 
 
     def __get_center_rotation_matrix(self, center: Coords2d, degree_angle : float):

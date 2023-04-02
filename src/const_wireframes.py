@@ -12,7 +12,7 @@ y = 2000
 x = 5000
 basic_square = WireFrame("Bob", True, [(x, x), (y, x), (y, y), (x, y)])
 
-basic_line = Line("Roger", (1000, 1000), (-5000,400))
+basic_line = Line("Roger", (1000, 1000), (7000, 7000))
 cool_triangle = WireFrame("Érica", True, [(0,0), (7000, 0), (3500, 3500)])
 smol_point = Point("Enzo", (-200, -200))
 

@@ -31,15 +31,15 @@ class Viewport(QWidget):
         world_objs_coords = self.__window.display_file
         for obj in world_objs_coords:
 
-            # Transforming window coords into viewport coords
+            # Transforming normalized coords into viewport coords
             viewport_coords = []
             colors.append(obj.color)
-            for coord in obj.coords:
+            for coord in obj.normalized_coords:
                 transformed = self.__transform_to_viewport(coord)
                 viewport_coords.append(transformed)
 
             if obj.is_closed:
-                transformed = self.__transform_to_viewport(obj.coords[0])
+                transformed = self.__transform_to_viewport(obj.normalized_coords[0])
                 viewport_coords.append(transformed)
 
 
@@ -58,8 +58,8 @@ class Viewport(QWidget):
     # Unitary values to where the point will be
     # relatively to its position on the window coordinates
     def __transform_into_unitary(self, point:Coords2d) -> Coords2d:
-        unit_x = (point.x - self.__window.min_x)/(self.__window.max_x - self.__window.min_x)
-        unit_y = 1 - ((point.y - self.__window.min_y)/(self.__window.max_y - self.__window.min_y))
+        unit_x = (point.x + 1)/2
+        unit_y = 1 - ((point.y + 1)/2)
         return Coords2d(unit_x, unit_y)
 
     def paintEvent(self, event):

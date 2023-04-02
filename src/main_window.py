@@ -49,6 +49,16 @@ class MainWindow(QWidget):
         minus.clicked.connect(self.clicked_minus)
         buttons_layout.addWidget(minus,2,0)
 
+        rotate_label = QLabel("Rotate window")
+        buttons_layout.addWidget(rotate_label, 5, 0)
+
+        self.__rotate_input = QLineEdit(self)
+        buttons_layout.addWidget(self.__rotate_input, 5, 1)
+
+        rotate_submit = QPushButton("Rotate")
+        rotate_submit.clicked.connect(self.rotate_window)
+        buttons_layout.addWidget(rotate_submit, 5, 2)
+
         buttons_widget.setLayout(buttons_layout)
 
         layout.addWidget(buttons_widget, 9,4)
@@ -64,6 +74,15 @@ class MainWindow(QWidget):
         layout.addWidget(create, 9, 0)
 
         self.setLayout(layout)
+
+    def rotate_window(self):
+        text = self.__rotate_input.text()
+        try:
+            self.__window.rotate(float(text))
+            self.__viewport.update()
+        except:
+            return
+        
 
     def clicked_right(self):
         self.__window.move_x(100)
