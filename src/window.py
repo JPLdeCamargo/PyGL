@@ -91,6 +91,7 @@ class Window:
         # Rotating
         angle = math.acos(abs_up.x * self.__up_vector.x + abs_up.y * self.__up_vector.y)
         degrees = (angle/math.pi) * 180
+        print(self.__up_vector)
         translate_center_m = CgMath.get_translation_matrix(-self.__center.x, -self.__center.y)
         rotation_m = CgMath.get_rotation_matrix(degrees)
         center_rotation_m = CgMath.matrix_multiply(translate_center_m, rotation_m)

@@ -18,7 +18,7 @@ class CreateObjWindow(QWidget):
         self.__window = window
         self.__viewport = viewport
         self.__transform_controller = transform_controller
-        self.__color = QtCore.Qt.black
+        self.__color = (0, 0, 0)
 
         self.__layout = QGridLayout()
         self.__welcome = QLabel("Select which object type you would like to create")
@@ -105,6 +105,7 @@ class CreateObjWindow(QWidget):
                 obj = Point(name, coords[0], self.__color)
 
             self.__window.add_to_display_file(obj)
+            self.__window.update_normalized()
             self.__viewport.update()
             self.__transform_controller.update_list()
             self.close()
