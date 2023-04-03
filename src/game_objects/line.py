@@ -10,4 +10,11 @@ class Line(ABCObject):
     def is_closed(self) -> bool:
         return False
 
+    def to_wavefront(self) -> str:
+        return (f"{self.name}\n"
+                f"c {self.color[0]} {self.color[1]} {self.color[2]}\n" 
+                f"l {self.coords[0].x} {self.coords[0].y}\n"
+                f"l {self.coords[1].x} {self.coords[1].y}\n")
+
+
         

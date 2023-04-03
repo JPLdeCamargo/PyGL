@@ -10,14 +10,17 @@ from .game_objects.wireframe import WireFrame
 from .game_objects.line import Line
 from .game_objects.point import Point
 from .transform_controller import TransformController
+from .wavefront_manager import WavefrontManager
 
 
 class CreateObjWindow(QWidget):
-    def __init__(self, window : Window, viewport : Viewport, transform_controller = TransformController):
+    def __init__(self, window : Window, viewport : Viewport,
+                 transform_controller:TransformController, wav_manager:WavefrontManager):
         super().__init__()
         self.__window = window
         self.__viewport = viewport
         self.__transform_controller = transform_controller
+        self.__wavefront_manager = wav_manager
         self.__color = (0, 0, 0)
 
         self.__layout = QGridLayout()
@@ -104,6 +107,10 @@ class CreateObjWindow(QWidget):
                     return
                 obj = Point(name, coords[0], self.__color)
 
+            # Saving newly created object
+            self.__wavefront_manager.save(obj, "newly_created")
+            
+            # Adding obj to display file and updating the ui
             self.__window.add_to_display_file(obj)
             self.__window.update_normalized()
             self.__viewport.update()

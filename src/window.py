@@ -1,14 +1,13 @@
 from .game_objects.ABCObject import ABCObject
 from .game_objects.coords2D import Coords2d
 from .game_objects.cg_math import CgMath
-from .const_wireframes import to_load
 
 
 import math
 
 
 class Window:
-    def __init__(self, x_size : float, y_size : float) -> None:
+    def __init__(self, x_size : float, y_size : float, to_load:list[ABCObject]) -> None:
         self.__display_file = to_load
 
         self.__size = Coords2d(x_size, y_size)

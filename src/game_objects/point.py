@@ -10,3 +10,8 @@ class Point(ABCObject):
     @property
     def is_closed(self) -> bool:
         return False
+
+    def to_wavefront(self) -> str:
+        return(f"{self.name}\n"
+               f"c {self.color[0]} {self.color[1]} {self.color[2]}\n" 
+               f"p {self.coords[0].x} {self.coords[0].y}\n")

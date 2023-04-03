@@ -17,3 +17,14 @@ class WireFrame(ABCObject):
     @property
     def is_closed(self) -> bool:
         return self.__is_closed
+
+    def to_wavefront(self) -> str:
+        wavefront_str = (f"{self.name}\n"
+                         f"c {self.color[0]} {self.color[1]} {self.color[2]}\n")
+        for point in self.coords:
+            wavefront_str += f"f {point.x} {point.y}\n"
+
+        val = 1 if self.__is_closed else 0 
+        wavefront_str += f"IsClosed {val}\n"
+
+        return wavefront_str

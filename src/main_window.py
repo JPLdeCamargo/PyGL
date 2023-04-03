@@ -2,16 +2,23 @@ from PyQt5.QtGui     import *
 from PyQt5.QtCore    import *
 from PyQt5.QtWidgets import *
 
+import os
+
 from .viewport import Viewport
 from .window import Window
 from .transform_controller import TransformController
 from .create_obj_window import CreateObjWindow
+from .wavefront_manager import WavefrontManager
+
 class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
-        self.__window = Window(7000, 7000)
+        self.__wavefront_manager = WavefrontManager(os.path.join(os.getcwd(), "obj_files"))
+
+        self.__window = Window(7000, 7000, self.__wavefront_manager.load_all())
         self.__viewport = Viewport(500, 500, self.__window)
         self.__viewport.resize(500, 500)
+
         self.setWindowTitle("Viewport Transform")
 
         layout = QGridLayout()
@@ -110,5 +117,13 @@ class MainWindow(QWidget):
 
     def create_obj(self):
         if self.__create_obj_window is None:
-            self.__create_obj_window = CreateObjWindow(self.__window, self.__viewport, self.__transform_controller)
+            self.__create_obj_window = CreateObjWindow(self.__window, 
+                                                       self.__viewport,
+                                                       self.__transform_controller,
+                                                       self.__wavefront_manager)
         self.__create_obj_window.show()
+
+    def closeEvent(self, event):
+            self.__wavefront_manager.backup_files(self.__window.display_file)
+
+            event.accept() 
