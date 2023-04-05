@@ -28,3 +28,6 @@ class WireFrame(ABCObject):
         wavefront_str += f"IsClosed {val}\n"
 
         return wavefront_str
+
+    def update_clipping(self):
+        self._clipped_coords = self.normalized_coords

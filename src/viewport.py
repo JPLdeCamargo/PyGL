@@ -16,6 +16,11 @@ class Viewport(QWidget):
         self.__max_y = max_y
         self.__min_x = 0
         self.__min_y = 0
+
+        # New set of boundary coords for clipping test
+        self.__offset = Coords2d(50, 50)
+
+
         self.__window = window
 
         self.setAutoFillBackground(True)
@@ -34,12 +39,12 @@ class Viewport(QWidget):
             # Transforming normalized coords into viewport coords
             viewport_coords = []
             colors.append(obj.color)
-            for coord in obj.normalized_coords:
+            for coord in obj.clipped_coords:
                 transformed = self.__transform_to_viewport(coord)
                 viewport_coords.append(transformed)
 
             if obj.is_closed:
-                transformed = self.__transform_to_viewport(obj.normalized_coords[0])
+                transformed = self.__transform_to_viewport(obj.clipped_coords[0])
                 viewport_coords.append(transformed)
 
 
@@ -48,9 +53,11 @@ class Viewport(QWidget):
             
 
     def __transform_to_viewport(self, point:Coords2d) -> Coords2d:
-        boundry_coord = Coords2d(self.__max_x - self.__min_x, self.__max_y - self.__min_y)
+        boundary_coord = Coords2d(self.__max_x - self.__offset.x * 2, self.__max_y - self.__offset.y * 2)
         unit = self.__transform_into_unitary(point)
-        transformed = unit * boundry_coord
+        transformed = unit * boundary_coord
+        # Adding offset
+        transformed += self.__offset 
         transformed = Coords2d(math.floor(transformed.x), math.floor(transformed.y))
         return transformed
 
@@ -65,6 +72,8 @@ class Viewport(QWidget):
     def paintEvent(self, event):
         painter = QPainter(self)
         painter.setPen(Qt.black)
+
+        self.__paint_limits(painter)
 
         objs = self.world_to_screen_coords()
         for i in range(len(objs[0])):
@@ -83,3 +92,10 @@ class Viewport(QWidget):
                                  math.floor(obj[i].y),
                                  math.floor(obj[i+1].x),
                                  math.floor(obj[i+1].y))
+
+    def __paint_limits(self, painter):
+        x, y = self.__offset.x, self.__offset.y
+        painter.drawLine(x, y, self.__max_x - x, y)
+        painter.drawLine(self.__max_x - x, y, self.__max_x - x, self.__max_y - y)
+        painter.drawLine(self.__max_x - x, self.__max_y - y, x, self.__max_y - y)
+        painter.drawLine(x, self.__max_y - y, x, y)

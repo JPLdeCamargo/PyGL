@@ -8,7 +8,10 @@ class ABCObject(ABC):
         self.__name = name
         self.__color = color
         self.__coords = coords
+        # Window coordinates
         self.__normalized_coords = []
+
+        self._clipped_coords = []
 
         # Used for calculating normalized coordinates after transformations
         self.__last_normalized_m = None
@@ -20,6 +23,10 @@ class ABCObject(ABC):
     @property
     def normalized_coords(self) -> list[Coords2d]:
         return self.__normalized_coords
+
+    @property
+    def clipped_coords(self) -> list[Coords2d]:
+        return self._clipped_coords
 
     @property
     @abstractmethod
@@ -37,6 +44,11 @@ class ABCObject(ABC):
     @abstractmethod
     def to_wavefront(self) -> str:
         pass
+    
+    @abstractmethod
+    def update_clipping(self):
+        pass
+
 
     def update_normalized(self, normalized_m:list[list[float]]):
         self.__normalized_coords = []
@@ -47,6 +59,8 @@ class ABCObject(ABC):
             x = transformed[0][0]
             y = transformed[0][1]
             self.__normalized_coords.append(Coords2d(x, y))
+        
+        self.update_clipping()
 
     
     def rotate(self, degree_angle : float, anchor : Coords2d):

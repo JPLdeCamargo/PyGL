@@ -16,5 +16,6 @@ class Line(ABCObject):
                 f"l {self.coords[0].x} {self.coords[0].y}\n"
                 f"l {self.coords[1].x} {self.coords[1].y}\n")
 
-
+    def update_clipping(self):
+        self._clipped_coords = self.normalized_coords
         

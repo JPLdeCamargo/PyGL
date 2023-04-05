@@ -15,3 +15,10 @@ class Point(ABCObject):
         return(f"{self.name}\n"
                f"c {self.color[0]} {self.color[1]} {self.color[2]}\n" 
                f"p {self.coords[0].x} {self.coords[0].y}\n")
+
+    def update_clipping(self):
+        self._clipped_coords = []
+        point = self.normalized_coords[0]
+        if (point.x >= -1 and point.x <= 1) and (point.y >= -1 and point.y <= 1):
+            self._clipped_coords = [point]
+
