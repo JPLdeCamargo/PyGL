@@ -1,4 +1,4 @@
-from src.main_window import MainWindow
+from src.gui.main_window import MainWindow
 
 import sys
 from PyQt5.QtGui     import *

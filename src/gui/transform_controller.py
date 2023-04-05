@@ -1,5 +1,5 @@
-from .window import Window
-from .viewport import Viewport
+from ..cg_classes.window import Window
+from ..cg_classes.viewport import Viewport
 from .transform_options import TransformOptions
 
 

@@ -3,14 +3,14 @@ from PyQt5.QtCore    import *
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore, QtWidgets
 
-from .window import Window
-from .viewport import Viewport
-from .enums.obj_types import ObjTypes
-from .game_objects.wireframe import WireFrame
-from .game_objects.line import Line
-from .game_objects.point import Point
+from ..cg_classes.window import Window
+from ..cg_classes.viewport import Viewport
+from ..enums.obj_types import ObjTypes
+from ..cg_classes.game_objects.wireframe import WireFrame
+from ..cg_classes.game_objects.line import Line
+from ..cg_classes.game_objects.point import Point
 from .transform_controller import TransformController
-from .wavefront_manager import WavefrontManager
+from ..cg_classes.wavefront_manager import WavefrontManager
 
 
 class CreateObjWindow(QWidget):

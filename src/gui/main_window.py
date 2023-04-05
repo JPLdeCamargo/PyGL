@@ -4,11 +4,11 @@ from PyQt5.QtWidgets import *
 
 import os
 
-from .viewport import Viewport
-from .window import Window
+from ..cg_classes.viewport import Viewport
+from ..cg_classes.window import Window
 from .transform_controller import TransformController
 from .create_obj_window import CreateObjWindow
-from .wavefront_manager import WavefrontManager
+from ..cg_classes.wavefront_manager import WavefrontManager
 
 class MainWindow(QWidget):
     def __init__(self):

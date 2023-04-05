@@ -1,7 +1,7 @@
-from .viewport import Viewport
-from .game_objects.ABCObject import ABCObject
-from .game_objects.coords2D import Coords2d
-from .enums.rotation_anchor import RotationAnchor
+from ..cg_classes.viewport import Viewport
+from ..cg_classes.game_objects.ABCObject import ABCObject
+from ..cg_classes.game_objects.coords2D import Coords2d
+from ..enums.rotation_anchor import RotationAnchor
 
 
 from PyQt5.QtGui     import *

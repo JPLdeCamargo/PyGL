@@ -2,7 +2,7 @@ from .game_objects.ABCObject import ABCObject
 from .game_objects.line import Line
 from .game_objects.point import Point
 from .game_objects.wireframe import WireFrame
-from .enums.obj_types import ObjTypes
+from ..enums.obj_types import ObjTypes
 
 import os
 
