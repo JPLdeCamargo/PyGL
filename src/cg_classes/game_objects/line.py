@@ -1,5 +1,6 @@
 from .coords2D import Coords2d
 from .ABCObject import ABCObject
+from .cg_math import CgMath
 
 class Line(ABCObject):
     def __init__(self, name : str, a:tuple[float], b:tuple[float], color=(0,0,0)) -> None:
@@ -17,5 +18,6 @@ class Line(ABCObject):
                 f"l {self.coords[1].x} {self.coords[1].y}\n")
 
     def update_clipping(self):
-        self._clipped_coords = self.normalized_coords
-        
+        a = self.normalized_coords[0]
+        b = self.normalized_coords[1]
+        self._clipped_coords = CgMath.cohen_shuterland_line_clipping(a, b)

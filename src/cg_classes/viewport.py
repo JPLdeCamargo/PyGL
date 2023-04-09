@@ -43,7 +43,7 @@ class Viewport(QWidget):
                 transformed = self.__transform_to_viewport(coord)
                 viewport_coords.append(transformed)
 
-            if obj.is_closed:
+            if obj.is_closed and len(obj.clipped_coords) > 0:
                 transformed = self.__transform_to_viewport(obj.clipped_coords[0])
                 viewport_coords.append(transformed)
 

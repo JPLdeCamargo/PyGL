@@ -1,5 +1,6 @@
 from .coords2D import Coords2d
 from .ABCObject import ABCObject
+from .cg_math import CgMath
 
 class WireFrame(ABCObject):
     def __init__(self, name : str, is_closed:bool, raw_coords: list[tuple[float]], color=(0, 0, 0)) -> None:
@@ -30,4 +31,4 @@ class WireFrame(ABCObject):
         return wavefront_str
 
     def update_clipping(self):
-        self._clipped_coords = self.normalized_coords
+        self._clipped_coords = CgMath.shuterland_hodgeman_polygon_clipping(self.normalized_coords)
