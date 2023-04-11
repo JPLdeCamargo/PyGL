@@ -83,10 +83,10 @@ class CgMath:
                     else:
                         new_poly.append(new_point[1])
 
+            crt_poly = new_poly
             if closed and len(crt_poly) > 0:
                 crt_poly.append(crt_poly[0])
-            crt_poly = new_poly
-        return crt_poly
+        return crt_poly[:-1]
                 
 
 
@@ -134,8 +134,6 @@ class CgMath:
                     if(active_flags <= 1 or (x >= -1 and x <= 1)):
                         return Coords2d(x, y)
                 elif i == 2 and flags[2]: # Right
-                    print("riiight")
-                    print(flags)
                     y = m * (1 - a.x) + a.y
                     x = 1
                     if(active_flags <= 1 or (y >= -1 and y <= 1)):

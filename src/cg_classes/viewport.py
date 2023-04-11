@@ -73,8 +73,6 @@ class Viewport(QWidget):
         painter = QPainter(self)
         painter.setPen(Qt.black)
 
-        self.__paint_limits(painter)
-
         objs = self.world_to_screen_coords()
         for i in range(len(objs[0])):
             obj = objs[0][i]
@@ -92,6 +90,9 @@ class Viewport(QWidget):
                                  math.floor(obj[i].y),
                                  math.floor(obj[i+1].x),
                                  math.floor(obj[i+1].y))
+
+        painter.setPen(Qt.black)
+        self.__paint_limits(painter)
 
     def __paint_limits(self, painter):
         x, y = self.__offset.x, self.__offset.y

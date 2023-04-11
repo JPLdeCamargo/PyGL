@@ -1,11 +1,10 @@
-Decidimos implementar o SCN, por possuir um método direto de saber se pontos estão fora da window
+Implementação do algoritmo de cohen shutterland para linhas
+Implementação do algoritmo de shuterland hodgeman para polígonos
 
-Cada objeto também guarda suas coordenadas normalizadas
+Infelizmente não tivemos tempo para implementar o segundo algorítmo de linha requisitado
+Também não tivemos tempo para implementação de polígonos preenchidos
 
-Ao criar um objeto o objeto recém criado é salvo em newly_created, ao fechar o programa todos os objs ficam salvos em backup
-
-Novos objetos podem ser adicionados com cores diferentes pela janela aberta pelo botão "Create new object"
-
-Para transformar um objeto, basta o seleciona-lo na lista e aplicar a transformação desejada
+O algoritmo de clipping de linhas de cohen shutterland foi modificado para reconhecer flags
+Significando para apenas clipar as partes sugeridas, ajudando na implementação do clipping de polígonos
 
 Executar execute.py para uma execução correta
