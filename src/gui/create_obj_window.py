@@ -9,6 +9,7 @@ from ..enums.obj_types import ObjTypes
 from ..cg_classes.game_objects.wireframe import WireFrame
 from ..cg_classes.game_objects.line import Line
 from ..cg_classes.game_objects.point import Point
+from ..cg_classes.game_objects.curve2D import Curve2D
 from .transform_controller import TransformController
 from ..cg_classes.wavefront_manager import WavefrontManager
 
@@ -40,6 +41,10 @@ class CreateObjWindow(QWidget):
         wire_radio.type = ObjTypes.WIREFRAME
         wire_radio.clicked.connect(self.clicked_radio)
 
+        curve_radio = QRadioButton("Curve")
+        curve_radio.type = ObjTypes.BEZIER
+        curve_radio.clicked.connect(self.clicked_radio)
+
         self.__closed_wire_checkbox = QCheckBox("Closed", self)
 
         name_label = QLabel("Name")
@@ -59,6 +64,7 @@ class CreateObjWindow(QWidget):
         self.__layout.addWidget(line_radio, 1, 0)
         self.__layout.addWidget(point_radio, 1, 1)
         self.__layout.addWidget(wire_radio, 1, 2)
+        self.__layout.addWidget(curve_radio, 1, 3)
         self.__layout.addWidget(self.__closed_wire_checkbox, 2, 0)
         self.__closed_wire_checkbox.close()
         self.__layout.addWidget(name_label, 3, 0)
@@ -106,6 +112,12 @@ class CreateObjWindow(QWidget):
                     self.__helper.setText("Coordinates input not accepted")
                     return
                 obj = Point(name, coords[0], self.__color)
+
+            elif self.__type == ObjTypes.BEZIER:
+                if len(coords) < 4:
+                    self.__helper.setText("Coordinates input not accepted")
+                    return
+                obj = Curve2D(name, coords, self.__color)
 
             # Saving newly created object
             self.__wavefront_manager.save(obj, "newly_created")
