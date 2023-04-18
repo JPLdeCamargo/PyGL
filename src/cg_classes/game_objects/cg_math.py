@@ -111,11 +111,14 @@ class CgMath:
             new_a = CgMath.__get_clip_coords(angle_coef, a, codes_a, flags)
             new_b = CgMath.__get_clip_coords(angle_coef, b, codes_b, flags)
 
-            return [new_a, new_b]
+            return [a for a in [new_a, new_b] if a is not None]
             
 
     @staticmethod
     def __get_clip_coords(m, a, codes_a, flags:list[bool]):
+        if codes_a == [False]*4:
+            return a
+
         active_flags = 0
         for flag in flags:
             if flag:
@@ -143,7 +146,8 @@ class CgMath:
                     x = -1
                     if(active_flags <= 1 or (y >= -1 and y <= 1)):
                         return Coords2d(x, y)
-        return a
+        return None
+        
 
     @staticmethod
     def __get_clipping_codes(point:Coords2d) -> list[bool]:

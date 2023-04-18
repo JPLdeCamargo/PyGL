@@ -2,6 +2,7 @@ from .game_objects.ABCObject import ABCObject
 from .game_objects.line import Line
 from .game_objects.point import Point
 from .game_objects.wireframe import WireFrame
+from .game_objects.curve2D import Curve2D
 from ..enums.obj_types import ObjTypes
 
 import os
@@ -71,6 +72,8 @@ class WavefrontManager:
             obj_type = ObjTypes.LINE
         elif line[0] == 'p':
             obj_type = ObjTypes.POINT
+        elif line[0] == 'b':
+            obj_type = ObjTypes.BEZIER
         elif line[0] == 'f':
             obj_type = ObjTypes.WIREFRAME
             id, value  = wavefront_lines[-1].split()
@@ -92,4 +95,6 @@ class WavefrontManager:
             return(Point(name, coords[0], color))
         elif obj_type == ObjTypes.WIREFRAME:
             return(WireFrame(name, is_open, coords, color))
+        elif obj_type == ObjTypes.BEZIER:
+            return(Curve2D(name, coords, color))
             

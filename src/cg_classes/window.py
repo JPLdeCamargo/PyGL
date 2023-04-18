@@ -2,6 +2,7 @@ from .game_objects.ABCObject import ABCObject
 from .game_objects.coords2D import Coords2d
 from .game_objects.cg_math import CgMath
 
+from .game_objects.curve2D import Curve2D
 
 import math
 

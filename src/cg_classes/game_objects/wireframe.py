@@ -31,4 +31,4 @@ class WireFrame(ABCObject):
         return wavefront_str
 
     def update_clipping(self):
-        self._clipped_coords = CgMath.shuterland_hodgeman_polygon_clipping(self.normalized_coords)
+        self._clipped_coords = CgMath.shuterland_hodgeman_polygon_clipping(self.normalized_coords, self.__is_closed)
