@@ -88,8 +88,8 @@ class ABCObject(ABC):
             self.__coords[i].x = transformed[0][0]
             self.__coords[i].y = transformed[0][1]
 
-            if len(self.__normalized_coords) != 0:
-                self.update_normalized(self.__last_normalized_m)
+        if len(self.__normalized_coords) != 0:
+            self.update_normalized(self.__last_normalized_m)
 
     def __get_center_rotation_matrix(self, center: Coords2d, degree_angle : float):
         to_center_matrix = CgMath.get_translation_matrix(-center.x, -center.y)
