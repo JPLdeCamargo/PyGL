@@ -1,6 +1,6 @@
 from .window import Window
-from .game_objects.coords2D import Coords2d
-from .game_objects.ABCObject import ABCObject
+from .game_objects.objs_2D.coords2D import Coords2d
+from .game_objects.objs_3D.ABCObject3D import ABCObject3D
 
 from PyQt5.QtGui     import *
 from PyQt5.QtCore    import *
@@ -29,7 +29,7 @@ class Viewport(QWidget):
         palette.setColor(QPalette.Window, QColor('grey'))
         self.setPalette(palette)
 
-    # Return a tuple, first = coords list, second = colors list
+    # Return a tuple, first = tuple(obj_coords, obj_edges), second = colors list
     def world_to_screen_coords(self):
         viewport_objs = []
         colors = []
@@ -43,12 +43,15 @@ class Viewport(QWidget):
                 transformed = self.__transform_to_viewport(coord)
                 viewport_coords.append(transformed)
 
-            if obj.is_closed and len(obj.clipped_coords) > 0:
-                transformed = self.__transform_to_viewport(obj.clipped_coords[0])
-                viewport_coords.append(transformed)
+            # if obj.is_closed and len(obj.clipped_coords) > 0:
+            #     transformed = self.__transform_to_viewport(obj.clipped_coords[0])
+            #     viewport_coords.append(transformed)
 
+            edges = None
+            if len(obj.coords) > 1:
+                edges = obj.edges
+            viewport_objs.append((viewport_coords, edges))
 
-            viewport_objs.append(viewport_coords)
         return (viewport_objs, colors)
             
 
@@ -75,21 +78,22 @@ class Viewport(QWidget):
 
         objs = self.world_to_screen_coords()
         for i in range(len(objs[0])):
-            obj = objs[0][i]
+            coords = objs[0][i][0]
+            edges = objs[0][i][1]
             color = objs[1][i]
             painter.setPen(QColor(color[0], color[1], color[2]))
             # point
-            if len(obj) == 1:
+            if len(coords) == 1:
                 # Changing pens to make point bigger, instead of only one pixel
                 painter.setPen(QPen(Qt.black, 3))
-                painter.drawPoint(math.floor(obj[0].x), math.floor(obj[0].y))
+                painter.drawPoint(math.floor(coords[0].x), math.floor(coords[0].y))
                 painter.setPen(Qt.black)
             # Lines and WireFrames
-            for i in range(len(obj)-1):
-                painter.drawLine(math.floor(obj[i].x),
-                                 math.floor(obj[i].y),
-                                 math.floor(obj[i+1].x),
-                                 math.floor(obj[i+1].y))
+            for edge in edges:
+                painter.drawLine(math.floor(coords[edge[0]].x),
+                                 math.floor(coords[edge[0]].y),
+                                 math.floor(coords[edge[1]].x),
+                                 math.floor(coords[edge[1]].y))
 
         painter.setPen(Qt.black)
         self.__paint_limits(painter)

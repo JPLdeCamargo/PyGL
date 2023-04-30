@@ -1,6 +1,6 @@
 from .coords2D import Coords2d
 from .ABCObject import ABCObject
-from .cg_math import CgMath
+from .cg_math_2D import CgMath2D
 
 class Line(ABCObject):
     def __init__(self, name : str, a:tuple[float], b:tuple[float], color=(0,0,0)) -> None:

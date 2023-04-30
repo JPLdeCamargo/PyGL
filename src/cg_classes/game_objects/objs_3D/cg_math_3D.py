@@ -1,7 +1,8 @@
 import math
-from .coords2D import Coords2d
+from .coords3D import Coords3d
+from ..objs_2D.coords2D import Coords2d
 
-class CgMath:
+class CgMath3D:
 
     @staticmethod
     def matrix_multiply(a : list[list[float]], b: list[list[float]]):
@@ -17,40 +18,57 @@ class CgMath:
         return result
 
     @staticmethod
-    def get_translation_matrix(vx: float, vy:float):
-        translation_matrix = [[1, 0, 0],
-                              [0, 1, 0],
-                              [vx, vy, 1]]
+    def get_translation_matrix(vx: float, vy:float, vz:float):
+        translation_matrix = [[1, 0, 0, 0],
+                              [0, 1, 0, 0],
+                              [0, 0, 1, 0],
+                              [vx, vy, vz, 1]]
         return translation_matrix
 
     @staticmethod
-    def get_scale_matrix(vx: float, vy:float):
-        scale_matrix = [[vx, 0, 0],
-                        [0, vy, 0],
-                        [0, 0, 1]]
+    def get_scale_matrix(vx: float, vy:float, vz:float):
+        scale_matrix = [[vx, 0, 0, 0],
+                        [0, vy, 0, 0],
+                        [0, 0, vz, 0],
+                        [0, 0, 0, 1]]
         return scale_matrix
 
     @staticmethod
-    def get_rotation_matrix(vx: float, vy:float):
-        scale_matrix = [[1, 0, 0],
-                        [0, 1, 0],
-                        [vx, vy, 1]]
-        return scale_matrix
-
-    @staticmethod
-    def get_rotation_matrix(degree_angle : float):
+    def get_rotation_matrix_x(degree_angle : float):
         rad = math.radians(degree_angle)
         cos = math.cos(rad)
         sin = math.sin(rad)
-        rotation_matrix = [[cos, -sin, 0],
-                        [sin, cos, 0],
-                        [0, 0, 1]]
+        rotation_matrix = [[1, 0, 0, 0],
+                           [0, cos, sin, 0],
+                           [0, -sin, cos, 0],
+                           [0, 0, 0, 1]]
         return rotation_matrix
 
+    @staticmethod
+    def get_rotation_matrix_y(degree_angle : float):
+        rad = math.radians(degree_angle)
+        cos = math.cos(rad)
+        sin = math.sin(rad)
+        rotation_matrix = [[cos, 0, -sin, 0],
+                           [0, 1, 0, 0],
+                           [sin, 0, cos, 0],
+                           [0, 0, 0, 1]]
+        return rotation_matrix
+
+    @staticmethod
+    def get_rotation_matrix_z(degree_angle : float):
+        rad = math.radians(degree_angle)
+        cos = math.cos(rad)
+        sin = math.sin(rad)
+        rotation_matrix = [[cos, sin, 0, 0],
+                           [-sin, cos, 0, 0],
+                           [0, 0, 1, 0],
+                           [0, 0, 0, 1]]
+        return rotation_matrix
 
     @staticmethod
     def __is_trespassing(a:Coords2d, flag_in_question:int):
-        codes_a = CgMath.__get_clipping_codes(a)
+        codes_a = CgMath3D.__get_clipping_codes(a)
         if codes_a[flag_in_question]:
             return True
         return False
@@ -70,9 +88,9 @@ class CgMath:
             for j in range(0, len(crt_poly) - 1):
                 a = crt_poly[j]
                 b = crt_poly[j +1]
-                if(CgMath.__is_trespassing(a, i)):
+                if(CgMath3D.__is_trespassing(a, i)):
                     outside = True
-                new_point = CgMath.cohen_shuterland_line_clipping(a, b, crt_flag)
+                new_point = CgMath3D.cohen_shuterland_line_clipping(a, b, crt_flag)
 
                 if len(new_point) == 0:
                     outside = True
@@ -96,8 +114,8 @@ class CgMath:
     # disabling a flag disables clipping on that specific limit
     @staticmethod
     def cohen_shuterland_line_clipping(a: Coords2d, b : Coords2d, flags=[True, True, True, True]) -> list[Coords2d]:
-        codes_a = CgMath.__get_clipping_codes(a)
-        codes_b = CgMath.__get_clipping_codes(b)
+        codes_a = CgMath3D.__get_clipping_codes(a)
+        codes_b = CgMath3D.__get_clipping_codes(b)
 
         codes_a = [a and f for a, f in zip(codes_a, flags)]
         codes_b = [b and f for b, f in zip(codes_b, flags)]
@@ -108,8 +126,8 @@ class CgMath:
             return []
         else: # Partially contained
             angle_coef = (b.y - a.y)/(b.x - a.x + 0.00001)
-            new_a = CgMath.__get_clip_coords(angle_coef, a, codes_a, flags)
-            new_b = CgMath.__get_clip_coords(angle_coef, b, codes_b, flags)
+            new_a = CgMath3D.__get_clip_coords(angle_coef, a, codes_a, flags)
+            new_b = CgMath3D.__get_clip_coords(angle_coef, b, codes_b, flags)
 
             return [a for a in [new_a, new_b] if a is not None]
             
@@ -164,7 +182,7 @@ if __name__ == "__main__":
          [4, 4]]
     b = [[1, 1, 6, 7, 8],
          [4, 4, 6, 7, 8]]
-    print(CgMath.matrix_multiply(a, b))
+    print(CgMath3D.matrix_multiply(a, b))
 
 
 

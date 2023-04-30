@@ -1,8 +1,8 @@
-from .game_objects.ABCObject import ABCObject
-from .game_objects.line import Line
-from .game_objects.point import Point
-from .game_objects.wireframe import WireFrame
-from .game_objects.curve2D import Curve2D
+from .game_objects.objs_3D.ABCObject3D import ABCObject3D
+# from .game_objects.line import Line
+from .game_objects.objs_3D.point3D import Point3D
+from .game_objects.objs_3D.wireframe3D import WireFrame3D
+# from .game_objects.curve2D import Curve2D
 from ..enums.obj_types import ObjTypes
 
 import os
@@ -12,7 +12,7 @@ class WavefrontManager:
     def __init__(self, save_path:str) -> None:
         self.__save_path = save_path
 
-    def save(self, obj:ABCObject, sub_directory:str) -> None:
+    def save(self, obj:ABCObject3D, sub_directory:str) -> None:
         path = os.path.join(self.__save_path, sub_directory)
         wavefront_str = obj.to_wavefront()
         try:
@@ -24,7 +24,7 @@ class WavefrontManager:
         f.write(wavefront_str)
         f.close()
 
-    def backup_files(self, objs:list[ABCObject]):
+    def backup_files(self, objs:list[ABCObject3D]):
         path = os.path.join(self.__save_path, "backup")
         try:
             os.mkdir(path)
@@ -34,7 +34,7 @@ class WavefrontManager:
         for obj in objs:
             self.save(obj, "backup")
 
-    def load_all(self) -> list[ABCObject]:
+    def load_all(self) -> list[ABCObject3D]:
         path = os.path.join(self.__save_path, "load_on_start")
         try:
             os.mkdir(path)
@@ -47,7 +47,7 @@ class WavefrontManager:
         return to_load
             
 
-    def load(self, path:str) -> ABCObject:
+    def load(self, path:str) -> ABCObject3D:
         # Structure:
         # First line = name
         # Second line = color
@@ -89,12 +89,12 @@ class WavefrontManager:
             coords.append((float(x), float(y)))
 
 
-        if obj_type == ObjTypes.LINE:
-            return(Line(name, coords[0], coords[1], color))
-        elif obj_type == ObjTypes.POINT:
-            return(Point(name, coords[0], color))
-        elif obj_type == ObjTypes.WIREFRAME:
-            return(WireFrame(name, is_open, coords, color))
-        elif obj_type == ObjTypes.BEZIER:
-            return(Curve2D(name, coords, color))
+        # if obj_type == ObjTypes.LINE:
+        #     return(Line(name, coords[0], coords[1], color))
+        # if obj_type == ObjTypes.POINT:
+        #     return(Point3D(name, coords[0], color))
+        # elif obj_type == ObjTypes.WIREFRAME:
+        #     return(WireFrame3D(name, is_open, coords, color))
+        # elif obj_type == ObjTypes.BEZIER:
+        #     return(Curve2D(name, coords, color))
             

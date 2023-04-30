@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from .coords2D import Coords2d
-from .cg_math import CgMath
+from .cg_math_2D import CgMath2D
 
 class ABCObject(ABC):
     def __init__(self, name: str, color : tuple[int], coords: list[Coords2d]) -> None:

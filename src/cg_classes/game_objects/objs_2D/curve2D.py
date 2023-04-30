@@ -1,6 +1,6 @@
 from .coords2D import Coords2d
 from .ABCObject import ABCObject
-from .cg_math import CgMath
+from .cg_math_2D import CgMath2D
 
 class Curve2D(ABCObject):
     def __init__(self, name: str, point_coords: list[list[float]], color=(0,0,0)) -> None:

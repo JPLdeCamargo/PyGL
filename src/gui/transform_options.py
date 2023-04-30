@@ -1,6 +1,6 @@
 from ..cg_classes.viewport import Viewport
-from ..cg_classes.game_objects.ABCObject import ABCObject
-from ..cg_classes.game_objects.coords2D import Coords2d
+from ..cg_classes.game_objects.objs_3D.ABCObject3D import ABCObject3D
+from ..cg_classes.game_objects.objs_3D.coords3D import Coords3d
 from ..enums.rotation_anchor import RotationAnchor
 
 
@@ -130,7 +130,7 @@ class TransformOptions(QWidget):
     def apply_rotation(self):
         try:
             angle = float(self.__angle.text())
-            center = Coords2d(0, 0)
+            center = Coords3d(0, 0, 0)
             if self.__rotate_anchor == RotationAnchor.OBJECT:
                 center = self.__current.get_center()
             elif self.__rotate_anchor == RotationAnchor.OTHER:
@@ -143,7 +143,7 @@ class TransformOptions(QWidget):
         except:
             self.__help.setText("Input type not suported")
 
-    def update(self, name : str, obj : ABCObject):
+    def update(self, name : str, obj : ABCObject3D):
         self.__reminder.setText(f"Currently editing: {name}")
         self.__current = obj
 

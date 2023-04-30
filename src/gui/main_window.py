@@ -85,7 +85,7 @@ class MainWindow(QWidget):
     def rotate_window(self):
         text = self.__rotate_input.text()
         try:
-            self.__window.rotate(float(text))
+            self.__window.rotate(float(text), (0,1,0))
             self.__viewport.update()
         except:
             return

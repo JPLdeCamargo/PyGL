@@ -6,10 +6,10 @@ from PyQt5 import QtCore, QtWidgets
 from ..cg_classes.window import Window
 from ..cg_classes.viewport import Viewport
 from ..enums.obj_types import ObjTypes
-from ..cg_classes.game_objects.wireframe import WireFrame
-from ..cg_classes.game_objects.line import Line
-from ..cg_classes.game_objects.point import Point
-from ..cg_classes.game_objects.curve2D import Curve2D
+from ..cg_classes.game_objects.objs_2D.wireframe import WireFrame
+from ..cg_classes.game_objects.objs_2D.line import Line
+from ..cg_classes.game_objects.objs_2D.point import Point
+from ..cg_classes.game_objects.objs_2D.curve2D import Curve2D
 from .transform_controller import TransformController
 from ..cg_classes.wavefront_manager import WavefrontManager
 
