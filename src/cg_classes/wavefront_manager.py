@@ -43,11 +43,11 @@ class WavefrontManager:
 
         to_load = []
         for file_name in os.listdir(path):
-            to_load.append(self.load(os.path.join(self.__save_path, "load_on_start", file_name)))
+            to_load.append(self.load_wireframe3D(os.path.join(self.__save_path, "load_on_start", file_name)))
         return to_load
             
 
-    def load(self, path:str) -> ABCObject3D:
+    def load_wireframe3D(self, path:str) -> ABCObject3D:
         # Structure:
         # First line = name
         # Second line = color
@@ -58,43 +58,34 @@ class WavefrontManager:
         wavefront_lines = f.readlines()
         f.close()
 
-        name = wavefront_lines[0][:-1]
-        wavefront_lines.pop(0)
-        color = [int(i) for i in wavefront_lines[0][2:].split()]
-        wavefront_lines.pop(0)
-
-        obj_type = ObjTypes.NONE
-
-            
-        is_open = False
-        line = wavefront_lines[0]
-        if line[0] == 'l':
-            obj_type = ObjTypes.LINE
-        elif line[0] == 'p':
-            obj_type = ObjTypes.POINT
-        elif line[0] == 'b':
-            obj_type = ObjTypes.BEZIER
-        elif line[0] == 'f':
-            obj_type = ObjTypes.WIREFRAME
-            id, value  = wavefront_lines[-1].split()
-            if value == '1':
-                is_open = True
-            wavefront_lines.pop(-1)
+        name = wavefront_lines[0]
+        name = name[:-1]
+        wavefront_lines = wavefront_lines[1:]
 
         coords = []
+        edges = []
+        edges_map = {}
         for line in wavefront_lines:
 
-            line = line[2:]
-            x, y = line.split()
-            coords.append((float(x), float(y)))
+            if line[:2] == "v ":
+                _, x, y, z = line.split()
+                new_coord = (float(x), float(y), float(z))
+                coords.append(new_coord)
+            if line[:2] == "f ":
+                face = line.split()
+                vs = []
+                for i in range(2, len(face)):
+                    vs.append(int(face[i].split("/")[0]))
+                vs.append(vs[-1])
+                for i in range(1, len(vs)):
+                    point = (vs[i-1]-1, vs[i]-1)
+                    if not point in edges_map:
+                        edges.append(point)
+                        edges_map[point] = True
+            if line[:2] == "e ":
+                edge = line.split()
+                edges.append((int(edge[1])-1, int(edge[2])-1))
+        
+        return WireFrame3D(name, edges, coords)
+                    
 
-
-        # if obj_type == ObjTypes.LINE:
-        #     return(Line(name, coords[0], coords[1], color))
-        # if obj_type == ObjTypes.POINT:
-        #     return(Point3D(name, coords[0], color))
-        # elif obj_type == ObjTypes.WIREFRAME:
-        #     return(WireFrame3D(name, is_open, coords, color))
-        # elif obj_type == ObjTypes.BEZIER:
-        #     return(Curve2D(name, coords, color))
-            

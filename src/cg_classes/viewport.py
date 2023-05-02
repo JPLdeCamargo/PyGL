@@ -90,10 +90,14 @@ class Viewport(QWidget):
                 painter.setPen(Qt.black)
             # Lines and WireFrames
             for edge in edges:
-                painter.drawLine(math.floor(coords[edge[0]].x),
-                                 math.floor(coords[edge[0]].y),
-                                 math.floor(coords[edge[1]].x),
-                                 math.floor(coords[edge[1]].y))
+                if coords[edge[0]] != coords[edge[1]]:
+                    painter.drawLine(math.floor(coords[edge[0]].x),
+                                    math.floor(coords[edge[0]].y),
+                                    math.floor(coords[edge[1]].x),
+                                    math.floor(coords[edge[1]].y))
+                else:
+                    painter.drawPoint(coords[edge[0]].x, coords[edge[0]].y)
+
 
         painter.setPen(Qt.black)
         self.__paint_limits(painter)

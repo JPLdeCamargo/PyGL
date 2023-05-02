@@ -3,7 +3,7 @@ from .ABCObject3D import ABCObject3D
 from .cg_math_3D import CgMath3D
 
 class WireFrame3D(ABCObject3D):
-    def __init__(self, name:str, is_closed:bool, edges:list[tuple[int]], raw_vertices: list[tuple[float]], color=(0, 0, 0)) -> None:
+    def __init__(self, name:str, edges:list[tuple[int]], raw_vertices: list[tuple[float]], color=(0, 0, 0)) -> None:
         # List with every point of the polygon
         # order matters, first point connect to the second one
         # last point connected to the first one
@@ -15,12 +15,6 @@ class WireFrame3D(ABCObject3D):
 
         self.__edges = edges
 
-        self.__is_closed = is_closed
-
-    @property
-    def is_closed(self) -> bool:
-        return self.__is_closed
-
     @property
     def edges(self) -> list[tuple[int]]:
         return self.__edges
@@ -29,10 +23,10 @@ class WireFrame3D(ABCObject3D):
         wavefront_str = (f"{self.name}\n"
                          f"c {self.color[0]} {self.color[1]} {self.color[2]}\n")
         for point in self.coords:
-            wavefront_str += f"f {point.x} {point.y} {point.z}\n"
+            wavefront_str += f"v {point.x} {point.y} {point.z}\n"
 
-        val = 1 if self.__is_closed else 0 
-        wavefront_str += f"IsClosed {val}\n"
+        for edge in self.__edges:
+            wavefront_str += f"e {edge[0]+1} {edge[1]+1}\n"
 
         return wavefront_str
 

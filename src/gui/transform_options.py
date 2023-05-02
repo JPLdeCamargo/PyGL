@@ -25,6 +25,8 @@ class TransformOptions(QWidget):
         self.__translate_x = QLineEdit(self)
         vy_text = QLabel("y")
         self.__translate_y = QLineEdit(self)
+        vz_text = QLabel("z")
+        self.__translate_z = QLineEdit(self)
         submit = QPushButton("apply")
         submit.clicked.connect(self.apply_translate)
         translate_widget = QWidget()
@@ -33,7 +35,9 @@ class TransformOptions(QWidget):
         translate_layout.addWidget(self.__translate_x, 0, 1)
         translate_layout.addWidget(vy_text, 1, 0)
         translate_layout.addWidget(self.__translate_y, 1, 1)
-        translate_layout.addWidget(submit, 2, 0, 1, 2)
+        translate_layout.addWidget(vz_text, 2, 0)
+        translate_layout.addWidget(self.__translate_z, 2, 1)
+        translate_layout.addWidget(submit, 3, 0, 1, 2)
         translate_widget.setLayout(translate_layout)
         tabs.addTab(translate_widget, "Translate")
 
@@ -42,6 +46,8 @@ class TransformOptions(QWidget):
         self.__scale_x = QLineEdit(self)
         vy_text_scale = QLabel("y")
         self.__scale_y = QLineEdit(self)
+        vz_text_scale = QLabel("z")
+        self.__scale_z = QLineEdit(self)
         submit_scale = QPushButton("apply")
         submit_scale.clicked.connect(self.apply_scale)
         scale_widget = QWidget()
@@ -50,7 +56,9 @@ class TransformOptions(QWidget):
         scale_layout.addWidget(self.__scale_x, 0, 1)
         scale_layout.addWidget(vy_text_scale, 1, 0)
         scale_layout.addWidget(self.__scale_y, 1, 1)
-        scale_layout.addWidget(submit_scale, 2, 0, 1, 2)
+        scale_layout.addWidget(vz_text_scale, 2, 0)
+        scale_layout.addWidget(self.__scale_z, 2, 1)
+        scale_layout.addWidget(submit_scale, 3, 0, 1, 2)
         scale_widget.setLayout(scale_layout)
         tabs.addTab(scale_widget, "Scale")
 
@@ -77,14 +85,35 @@ class TransformOptions(QWidget):
         self.__other_center_widget = QWidget()
         vx_label = QLabel("x")
         vy_label = QLabel("y")
+        vz_label = QLabel("y")
         self.__vx_input = QLineEdit(self.__other_center_widget)
         self.__vy_input = QLineEdit(self.__other_center_widget)
+        self.__vz_input = QLineEdit(self.__other_center_widget)
         center_layout = QGridLayout()
         center_layout.addWidget(vx_label, 0, 0)
         center_layout.addWidget(self.__vx_input, 0, 1)
         center_layout.addWidget(vy_label, 0, 2)
         center_layout.addWidget(self.__vy_input, 0, 3)
+        center_layout.addWidget(vz_label, 0, 4)
+        center_layout.addWidget(self.__vz_input, 0, 5)
         self.__other_center_widget.setLayout(center_layout)
+
+        ax_label = QLabel("ax")
+        self.__ax_input = QLineEdit(self)
+        ay_label = QLabel("ay")
+        self.__ay_input = QLineEdit(self)
+        az_label = QLabel("az")
+        self.__az_input = QLineEdit(self)
+        axis_widget = QWidget()
+        axis_layout = QGridLayout()
+
+        axis_layout.addWidget(ax_label, 0, 0)
+        axis_layout.addWidget(self.__ax_input, 0, 1)
+        axis_layout.addWidget(ay_label, 0, 2)
+        axis_layout.addWidget(self.__ay_input, 0, 3)
+        axis_layout.addWidget(az_label, 0, 4)
+        axis_layout.addWidget(self.__az_input, 0, 5)
+        axis_widget.setLayout(axis_layout)
 
         rotation_widget = QWidget()
         rotation_layout = QGridLayout()
@@ -92,10 +121,15 @@ class TransformOptions(QWidget):
         rotation_layout.addWidget(world, 1, 0)
         rotation_layout.addWidget(object, 1, 1)
         rotation_layout.addWidget(other, 1, 2)
-        rotation_layout.addWidget(self.__other_center_widget, 2, 0, 1, 3)
-        rotation_layout.addWidget(angle_text_rotation, 3, 0)
-        rotation_layout.addWidget(self.__angle, 3, 1, 1, 2)
-        rotation_layout.addWidget(submit_rotation, 4, 0, 1, 3)
+
+        rotation_layout.addWidget(axis_widget, 2, 0, 1, 3)
+
+        rotation_layout.addWidget(self.__other_center_widget, 3, 0, 1, 3)
+
+        rotation_layout.addWidget(angle_text_rotation, 4, 0)
+        rotation_layout.addWidget(self.__angle, 4, 1, 1, 2)
+
+        rotation_layout.addWidget(submit_rotation, 5, 0, 1, 3)
         rotation_widget.setLayout(rotation_layout)
         tabs.addTab(rotation_widget, "Rotation")
         
@@ -109,7 +143,8 @@ class TransformOptions(QWidget):
         try:
             vx = float(self.__translate_x.text())
             vy = float(self.__translate_y.text())
-            self.__current.translate(vx, vy)
+            vz = float(self.__translate_z.text())
+            self.__current.translate(vx, vy, vz)
             self.__viewport.update()
             self.__help.setText(f"Translating {self.__current.name}")
 
@@ -120,7 +155,8 @@ class TransformOptions(QWidget):
         try:
             vx = float(self.__scale_x.text())
             vy = float(self.__scale_y.text())
-            self.__current.scale(vx, vy)
+            vz = float(self.__scale_z.text())
+            self.__current.scale(vx, vy, vz)
             self.__viewport.update()
             self.__help.setText(f"Scaling {self.__current.name}")
 
@@ -131,12 +167,18 @@ class TransformOptions(QWidget):
         try:
             angle = float(self.__angle.text())
             center = Coords3d(0, 0, 0)
+            ax = float(self.__ax_input.text())
+            ay = float(self.__ay_input.text())
+            az = float(self.__az_input.text())
+            axis = Coords3d(ax, ay, az)
+
             if self.__rotate_anchor == RotationAnchor.OBJECT:
                 center = self.__current.get_center()
             elif self.__rotate_anchor == RotationAnchor.OTHER:
                 center.x = float(self.__vx_input.text())
                 center.y = float(self.__vy_input.text())
-            self.__current.rotate(angle, center)
+                center.z = float(self.__vz_input.text())
+            self.__current.rotate(angle, center, axis)
             self.__viewport.update()
             self.__help.setText(f"Rotating {self.__current.name}")
 

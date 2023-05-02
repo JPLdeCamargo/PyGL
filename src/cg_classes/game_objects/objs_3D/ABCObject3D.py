@@ -35,11 +35,6 @@ class ABCObject3D(ABC):
         return self._clipped_coords
 
     @property
-    @abstractmethod
-    def is_closed(self) -> bool:
-        pass
-
-    @property
     def name(self) -> str:
         return self.__name
 
@@ -155,7 +150,7 @@ class ABCObject3D(ABC):
         return CgMath3D.matrix_multiply(aux, from_center_matrix)
 
     def get_center(self):
-        center = Coords3d(0, 0)
+        center = Coords3d(0, 0, 0)
         for point in self.coords:
             center.x += point.x
             center.y += point.y
