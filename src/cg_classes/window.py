@@ -13,13 +13,11 @@ import copy
 
 class Window:
     def __init__(self, x_size : float, y_size : float, to_load:list[ABCObject3D]) -> None:
-        # self.__display_file = [WireFrame3D("Lindo",
-        #                                    [(0,1),(1,2),(2,3),(3,0),
-        #                                     (0,4),(1,5),(2,6),(3,7),
-        #                                     (4,5),(5,6),(6,7),(7,4)], 
-        #                                    [(0,0,0),(3500,0,0),(3500,0,3500),(0,0,3500),
-        #                                     (0,3500,0),(3500,3500,0),(3500,3500,3500),(0,3500,3500)])]
-        self.__display_file = to_load
+        self.__display_file = [WireFrame3D("Lindo",
+                                           [(0,1,2,3),(4,5,6,7),(1,2,6,5),(0,3,7,4),(3,2,6,7),(0,1,5,4)], 
+                                           [(0,0,0),(3500,0,0),(3500,0,3500),(0,0,3500),
+                                            (0,3500,0),(3500,3500,0),(3500,3500,3500),(0,3500,3500)])]
+        # self.__display_file = to_load
         # self.__display_file[0].rotate(30,Coords3d(1750,1750,1750),Coords3d(1,1,1))
 
         self.__size = Coords2d(x_size, y_size)
@@ -27,6 +25,7 @@ class Window:
         self.__up_vector = Coords3d(0, 1, 0)
         self.__right_vector = Coords3d(1, 0, 0)
         self.__front_vector = Coords3d(0, 0, 1)
+        self.__cop = Coords3d(x_size/2, y_size/2, max(x_size, y_size)*1.3)
 
         self.__ratio = self.__size.x/self.__size.y
 
@@ -35,9 +34,16 @@ class Window:
         for obj in self.__display_file:
             self.__names_map[obj.name] = obj
 
+        d =  self.__cop.z
+        self.__perspective_matrix = [[1, 0, 0, 0],
+                                     [0, 1, 0, 0],
+                                     [0, 0, 1, 1/d],
+                                     [0, 0, 0, 0]]
+
         # Filling normalized coords of all objects
         self.update_world()
         self.update_normalized()
+
         
     @property
     def display_file(self) -> list[ABCObject3D]:
@@ -142,17 +148,7 @@ class Window:
         return False
 
     def update_normalized(self):
-        abs_up = Coords2d(0, 1)
-
-        # Rotating
-        angle = math.acos(abs_up.x * self.__up_vector.x + abs_up.y * self.__up_vector.y)
-        degrees = (angle/math.pi) * 180
-        if self.__up_vector.x < 0 or self.__right_vector.x < 0 or self.__front_vector.x < 0:
-            degrees = 360 - degrees
-
         translate_center_m = CgMath2D.get_translation_matrix(-self.__center.x, -self.__center.y)
-        rotation_m = CgMath2D.get_rotation_matrix(-degrees)
-        center_rotation_m = CgMath2D.matrix_multiply(translate_center_m, rotation_m)
 
         # Normalizing -1, 1
         scale_x = 2/self.__size.x
@@ -161,13 +157,14 @@ class Window:
         # translate_m = CgMath2D.get_translation_matrix(-1, -1)
         # normalization_m = CgMath2D.matrix_multiply(scale_m, translate_m)
 
-        full_normalize_transform = CgMath2D.matrix_multiply(center_rotation_m, scale_m)
+        full_normalize_transform = CgMath2D.matrix_multiply(translate_center_m, scale_m)
 
         for obj in self.__display_file:
             obj.update_normalized(full_normalize_transform)
 
     def update_world(self):
-        to_center = CgMath3D.get_translation_matrix(-self.__center.x, -self.__center.y, -self.__center.z)
+        # to_center = CgMath3D.get_translation_matrix(-self.__center.x, -self.__center.y, -self.__center.z)
+        to_cop = CgMath3D.get_translation_matrix(-self.__cop.x, -self.__cop.y, -self.__cop.z)
 
         # Align rotation vector to zx plane
         angle_to_zy_axis = self.__get_angle(Coords2d(0,1), Coords2d(self.__front_vector.x, self.__front_vector.z))
@@ -209,10 +206,12 @@ class Window:
         # print("_____________________________________________________________")
         # print(v_up, v_front, v_right)
 
-        world_m = CgMath3D.matrix_multiply(to_center, test)
+        world_m = CgMath3D.matrix_multiply(to_cop, test)
+
+        world_m = CgMath3D.matrix_multiply(world_m, self.__perspective_matrix)
 
 
-        from_center = CgMath3D.get_translation_matrix(self.__center.x, self.__center.y, self.__center.z)
+        from_center = CgMath3D.get_translation_matrix(self.__cop.x, self.__cop.y, self.__cop.z)
         world_m = CgMath3D.matrix_multiply(world_m, from_center)
 
         for obj in self.__display_file:

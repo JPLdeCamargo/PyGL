@@ -69,9 +69,9 @@ class ABCObject3D(ABC):
         for point in self.coords:
             homogenous = [[point.x, point.y, point.z, 1]]
             transformed = CgMath2D.matrix_multiply(homogenous, world_m)
-            x = transformed[0][0]
-            y = transformed[0][1]
-            z = transformed[0][2]
+            x = transformed[0][0]/transformed[0][3]
+            y = transformed[0][1]/transformed[0][3]
+            z = transformed[0][2]/transformed[0][3]
 
             self.__world_coords.append(Coords3d(x, y, z))
 

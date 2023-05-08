@@ -3,7 +3,7 @@ from .ABCObject3D import ABCObject3D
 from .cg_math_3D import CgMath3D
 
 class WireFrame3D(ABCObject3D):
-    def __init__(self, name:str, edges:list[tuple[int]], raw_vertices: list[tuple[float]], color=(0, 0, 0)) -> None:
+    def __init__(self, name:str, faces:list[tuple[int]], raw_vertices: list[tuple[float]], color=(0, 0, 0)) -> None:
         # List with every point of the polygon
         # order matters, first point connect to the second one
         # last point connected to the first one
@@ -13,11 +13,11 @@ class WireFrame3D(ABCObject3D):
         
         super().__init__(name, color, coords)
 
-        self.__edges = edges
+        self.__faces = faces
 
     @property
-    def edges(self) -> list[tuple[int]]:
-        return self.__edges
+    def faces(self) -> list[tuple[int]]:
+        return self.__faces
 
     def to_wavefront(self) -> str:
         wavefront_str = (f"{self.name}\n"
@@ -31,4 +31,13 @@ class WireFrame3D(ABCObject3D):
         return wavefront_str
 
     def update_clipping(self):
-        self._clipped_coords = self.normalized_coords
+        self._clipped_coords = []
+        for face in self.__faces:
+            face_coords = []
+            for i in range(len(face)):
+                face_coords.append(self.normalized_coords[face[i]])
+            clipped = CgMath3D.shuterland_hodgeman_polygon_clipping(face_coords)
+            if len(clipped) != 0:
+                self._clipped_coords.append(clipped)
+
+

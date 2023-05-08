@@ -47,22 +47,22 @@ class Viewport(QWidget):
             #     transformed = self.__transform_to_viewport(obj.clipped_coords[0])
             #     viewport_coords.append(transformed)
 
-            edges = None
-            if len(obj.coords) > 1:
-                edges = obj.edges
-            viewport_objs.append((viewport_coords, edges))
+            viewport_objs.append(viewport_coords)
 
         return (viewport_objs, colors)
             
 
-    def __transform_to_viewport(self, point:Coords2d) -> Coords2d:
-        boundary_coord = Coords2d(self.__max_x - self.__offset.x * 2, self.__max_y - self.__offset.y * 2)
-        unit = self.__transform_into_unitary(point)
-        transformed = unit * boundary_coord
-        # Adding offset
-        transformed += self.__offset 
-        transformed = Coords2d(math.floor(transformed.x), math.floor(transformed.y))
-        return transformed
+    def __transform_to_viewport(self, face:list[Coords2d]) -> Coords2d:
+        transformed_face = []
+        for point in face:
+            boundary_coord = Coords2d(self.__max_x - self.__offset.x * 2, self.__max_y - self.__offset.y * 2)
+            unit = self.__transform_into_unitary(point)
+            transformed = unit * boundary_coord
+            # Adding offset
+            transformed += self.__offset 
+            transformed = Coords2d(math.floor(transformed.x), math.floor(transformed.y))
+            transformed_face.append(transformed)
+        return transformed_face
 
                  
     # Unitary values to where the point will be
@@ -78,25 +78,26 @@ class Viewport(QWidget):
 
         objs = self.world_to_screen_coords()
         for i in range(len(objs[0])):
-            coords = objs[0][i][0]
-            edges = objs[0][i][1]
+            faces = objs[0][i]
             color = objs[1][i]
             painter.setPen(QColor(color[0], color[1], color[2]))
             # point
-            if len(coords) == 1:
-                # Changing pens to make point bigger, instead of only one pixel
-                painter.setPen(QPen(Qt.black, 3))
-                painter.drawPoint(math.floor(coords[0].x), math.floor(coords[0].y))
-                painter.setPen(Qt.black)
-            # Lines and WireFrames
-            for edge in edges:
-                if coords[edge[0]] != coords[edge[1]]:
-                    painter.drawLine(math.floor(coords[edge[0]].x),
-                                    math.floor(coords[edge[0]].y),
-                                    math.floor(coords[edge[1]].x),
-                                    math.floor(coords[edge[1]].y))
-                else:
-                    painter.drawPoint(coords[edge[0]].x, coords[edge[0]].y)
+            # if len(coords) == 1:
+            #     # Changing pens to make point bigger, instead of only one pixel
+            #     painter.setPen(QPen(Qt.black, 3))
+            #     painter.drawPoint(math.floor(coords[0].x), math.floor(coords[0].y))
+            #     painter.setPen(Qt.black)
+            for face in faces:
+                for p in range(len(face)-1):
+                    painter.drawLine(math.floor(face[p].x),
+                                    math.floor(face[p].y),
+                                    math.floor(face[p+1].x),
+                                    math.floor(face[p+1].y))
+
+                painter.drawLine(math.floor(face[0].x),
+                                math.floor(face[0].y),
+                                math.floor(face[-1].x),
+                                math.floor(face[-1].y))
 
 
         painter.setPen(Qt.black)
