@@ -25,19 +25,31 @@ class WireFrame3D(ABCObject3D):
         for point in self.coords:
             wavefront_str += f"v {point.x} {point.y} {point.z}\n"
 
-        for edge in self.__edges:
-            wavefront_str += f"e {edge[0]+1} {edge[1]+1}\n"
+        for face in self.__faces:
+            to_print = "f "
+            for point in face:
+                to_print += f"{point+1}/0/0 "
 
+            wavefront_str += to_print[:-1] + '\n'
         return wavefront_str
 
     def update_clipping(self):
         self._clipped_coords = []
+        clipped_map = {}
         for face in self.__faces:
             face_coords = []
             for i in range(len(face)):
                 face_coords.append(self.normalized_coords[face[i]])
+
             clipped = CgMath3D.shuterland_hodgeman_polygon_clipping(face_coords)
-            if len(clipped) != 0:
-                self._clipped_coords.append(clipped)
+            for i in range(len(clipped)-1):
+                a = f"{clipped[i]}"
+                b = f"{clipped[i+1]}"
+                ab = [a, b]
+                ab.sort()
+                ab = tuple(ab)
+                if not ab in clipped_map:
+                    clipped_map[ab] = True
+                    self._clipped_coords.append((clipped[i], clipped[i+1]))
 
 

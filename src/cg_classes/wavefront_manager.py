@@ -48,12 +48,6 @@ class WavefrontManager:
             
 
     def load_wireframe3D(self, path:str) -> ABCObject3D:
-        # Structure:
-        # First line = name
-        # Second line = color
-        # Remaining = points
-        # In case of a wireframe, last line = identifier if the polygon is closed or not
-
         f = open(path)
         wavefront_lines = f.readlines()
         f.close()
@@ -63,8 +57,7 @@ class WavefrontManager:
         wavefront_lines = wavefront_lines[1:]
 
         coords = []
-        edges = []
-        edges_map = {}
+        faces = []
         for line in wavefront_lines:
 
             if line[:2] == "v ":
@@ -72,20 +65,10 @@ class WavefrontManager:
                 new_coord = (float(x), float(y), float(z))
                 coords.append(new_coord)
             if line[:2] == "f ":
-                face = line.split()
-                vs = []
-                for i in range(2, len(face)):
-                    vs.append(int(face[i].split("/")[0]))
-                vs.append(vs[-1])
-                for i in range(1, len(vs)):
-                    point = (vs[i-1]-1, vs[i]-1)
-                    if not point in edges_map:
-                        edges.append(point)
-                        edges_map[point] = True
-            if line[:2] == "e ":
-                edge = line.split()
-                edges.append((int(edge[1])-1, int(edge[2])-1))
+                l = line[2:]
+                face = tuple([int(i.split("/")[0])-1 for i in (l.split())])
+                faces.append(face)
         
-        return WireFrame3D(name, edges, coords)
+        return WireFrame3D(name, faces, coords)
                     
 

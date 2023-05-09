@@ -13,12 +13,11 @@ import copy
 
 class Window:
     def __init__(self, x_size : float, y_size : float, to_load:list[ABCObject3D]) -> None:
-        self.__display_file = [WireFrame3D("Lindo",
-                                           [(0,1,2,3),(4,5,6,7),(1,2,6,5),(0,3,7,4),(3,2,6,7),(0,1,5,4)], 
-                                           [(0,0,0),(3500,0,0),(3500,0,3500),(0,0,3500),
-                                            (0,3500,0),(3500,3500,0),(3500,3500,3500),(0,3500,3500)])]
-        # self.__display_file = to_load
-        # self.__display_file[0].rotate(30,Coords3d(1750,1750,1750),Coords3d(1,1,1))
+        # self.__display_file = [WireFrame3D("Lindo",
+        #                                    [(0,1,2,3),(4,5,6,7),(1,2,6,5),(0,3,7,4),(3,2,6,7),(0,1,5,4)], 
+        #                                    [(0,0,0),(3500,0,0),(3500,0,3500),(0,0,3500),
+        #                                     (0,3500,0),(3500,3500,0),(3500,3500,3500),(0,3500,3500)])]
+        self.__display_file = to_load
 
         self.__size = Coords2d(x_size, y_size)
         self.__center = Coords3d(x_size/2, y_size/2, 0)
@@ -210,9 +209,6 @@ class Window:
 
         world_m = CgMath3D.matrix_multiply(world_m, self.__perspective_matrix)
 
-
-        from_center = CgMath3D.get_translation_matrix(self.__cop.x, self.__cop.y, self.__cop.z)
-        world_m = CgMath3D.matrix_multiply(world_m, from_center)
 
         for obj in self.__display_file:
             obj.update_world(world_m)
