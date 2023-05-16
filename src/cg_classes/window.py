@@ -5,7 +5,7 @@ from .game_objects.objs_3D.cg_math_3D import CgMath3D
 from .game_objects.objs_2D.coords2D import Coords2d
 from .game_objects.objs_2D.cg_math_2D import CgMath2D
 
-from .game_objects.objs_3D.wireframe3D import WireFrame3D
+from .game_objects.objs_3D.bezier3D import Bezier3D
 
 import math
 import copy
@@ -13,11 +13,14 @@ import copy
 
 class Window:
     def __init__(self, x_size : float, y_size : float, to_load:list[ABCObject3D]) -> None:
-        # self.__display_file = [WireFrame3D("Lindo",
-        #                                    [(0,1,2,3),(4,5,6,7),(1,2,6,5),(0,3,7,4),(3,2,6,7),(0,1,5,4)], 
-        #                                    [(0,0,0),(3500,0,0),(3500,0,3500),(0,0,3500),
-        #                                     (0,3500,0),(3500,3500,0),(3500,3500,3500),(0,3500,3500)])]
-        self.__display_file = to_load
+        curve = Bezier3D("Terrain",
+                         [[(2000, 0, 500), (3000, 0 , 500), (4000, 0, 500), (5000, 0, 500)],
+                          [(2000, 0, 1000), (3000, 3000 , 1000), (4000, 2000, 1000), (5000, 0, 1000)],
+                          [(2000, 0, 1500), (3000, 3000 , 1500), (4000, 2000, 1500), (5000, 0, 1500)],
+                          [(2000, 0, 2000), (3000, 0 , 2000), (4000, 0, 2000), (5000, 0, 2000)]])
+
+        self.__display_file = [curve]
+        # self.__display_file = to_load
 
         self.__size = Coords2d(x_size, y_size)
         self.__center = Coords3d(x_size/2, y_size/2, 0)
@@ -67,6 +70,7 @@ class Window:
                                 self.__right_vector.y * delta,
                                 self.__right_vector.z * delta)
         self.__center += delta_vector
+        # self.__cop += delta_vector
 
         self.update_world()
         self.update_normalized()
@@ -78,6 +82,7 @@ class Window:
                                 self.__up_vector.y * delta,
                                 self.__up_vector.z * delta)
         self.__center += delta_vector
+        # self.__cop += delta_vector
 
         self.update_world()
         self.update_normalized()
@@ -94,6 +99,19 @@ class Window:
 
         self.update_world()
         self.update_normalized()
+    # def zoom(self, delta:float):
+    #     scale = self.__size.y
+    #     delta = (delta * scale)/1000
+    #     delta_vector = Coords3d(self.__front_vector.x * delta,
+    #                             self.__front_vector.y * delta,
+    #                             self.__front_vector.z * delta)
+    #     self.__center += delta_vector
+    #     # self.__cop += delta_vector
+    #     print(self.__center)
+    #     print(self.__cop)
+
+    #     self.update_world()
+    #     self.update_normalized()
 
     def rotate(self, angle:float, rotation_vector:Coords3d):
         # Align rotation vector to xy plane
@@ -121,6 +139,7 @@ class Window:
         self.__up_vector = self.__transform_vector(self.__up_vector, rotation_m)
         self.__right_vector = self.__transform_vector(self.__right_vector, rotation_m)
         self.__front_vector = self.__transform_vector(self.__front_vector, rotation_m)
+        self.__cop = self.__transform_vector(self.__cop, rotation_m)
 
         self.update_world()
         self.update_normalized()
