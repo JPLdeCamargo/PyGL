@@ -1,6 +1,6 @@
 import math
-from .coords3D import Coords3d
 from ..objs_2D.coords2D import Coords2d
+from .coords3D import Coords3d
 
 class CgMath3D:
 
@@ -16,6 +16,21 @@ class CgMath3D:
                 row.append(sum)
             result.append(row)
         return result
+    
+    @staticmethod
+    def matrix_multiply_multiple(*matrices:list[list[float]]):
+        crt = matrices[0]
+        for i in range(1, len(matrices)):
+            crt = CgMath3D.matrix_multiply(crt, matrices[i])
+        return crt
+
+    @staticmethod
+    def transpose(matrix:list[list[float]]):
+        t = [[0 for j in range(len(matrix[0]))] for i in range(len(matrix))]
+        for i in range(len(matrix)):
+            for j in range(len(matrix[0])):
+                t[j][i] = matrix[i][j]
+        return t
 
     @staticmethod
     def get_translation_matrix(vx: float, vy:float, vz:float):
@@ -74,7 +89,7 @@ class CgMath3D:
         return False
 
     @staticmethod
-    def shuterland_hodgeman_polygon_clipping(coords:list[Coords2d], closed=True) -> list[Coords2d]:
+    def shuterland_hodgeman_polygon_clipping(coords:list[Coords3d], closed=True) -> list[Coords2d]:
         crt_poly = coords
         if closed:
             crt_poly.append(crt_poly[0])
@@ -82,7 +97,6 @@ class CgMath3D:
             flags = [False] * 4
             crt_flag = flags
             crt_flag[i] = True
-            # crt_flag = [False, True, False, False]
             new_poly = []
             outside = True
             for j in range(0, len(crt_poly) - 1):
@@ -113,7 +127,7 @@ class CgMath3D:
     # Flags added for Shuterland polygon clipping
     # disabling a flag disables clipping on that specific limit
     @staticmethod
-    def cohen_shuterland_line_clipping(a: Coords2d, b : Coords2d, flags=[True, True, True, True]) -> list[Coords2d]:
+    def cohen_shuterland_line_clipping(a: Coords3d, b : Coords3d, flags=[True, True, True, True]) -> list[Coords2d]:
         codes_a = CgMath3D.__get_clipping_codes(a)
         codes_b = CgMath3D.__get_clipping_codes(b)
 
@@ -148,7 +162,7 @@ class CgMath3D:
                     y = 1
                     x = a.x + 1/m * (1 - a.y)
                     if(active_flags <= 1 or (x >= -1 and x <= 1)):
-                        return Coords2d(x, y)
+                        return Coords3d(x, y, a.z)
                 elif i == 1 and flags[1]: # Bottom
                     y = -1
                     x = a.x + 1/m * (-1 - a.y)
@@ -158,12 +172,12 @@ class CgMath3D:
                     y = m * (1 - a.x) + a.y
                     x = 1
                     if(active_flags <= 1 or (y >= -1 and y <= 1)):
-                        return Coords2d(x, y)
+                        return Coords3d(x, y, a.z)
                 elif i == 3 and flags[3]: # Left
                     y = m * (-1 - a.x) + a.y
                     x = -1
                     if(active_flags <= 1 or (y >= -1 and y <= 1)):
-                        return Coords2d(x, y)
+                        return Coords3d(x, y, a.z)
         return None
         
 
@@ -174,17 +188,3 @@ class CgMath3D:
         third = True if point.x > 1 else False # Right
         forth = True if point.x < -1 else False # Left
         return [first, second, third, forth] 
-
-
-if __name__ == "__main__":
-    a = [[2, 2],
-         [3, 3],
-         [4, 4]]
-    b = [[1, 1, 6, 7, 8],
-         [4, 4, 6, 7, 8]]
-    print(CgMath3D.matrix_multiply(a, b))
-
-
-
-
-

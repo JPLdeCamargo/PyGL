@@ -35,6 +35,7 @@ class WireFrame3D(ABCObject3D):
 
     def update_clipping(self):
         self._clipped_coords = []
+        self._rasterizer_coords = []
         clipped_map = {}
         for face in self.__faces:
             face_coords = []
@@ -42,6 +43,8 @@ class WireFrame3D(ABCObject3D):
                 face_coords.append(self.normalized_coords[face[i]])
 
             clipped = CgMath3D.shuterland_hodgeman_polygon_clipping(face_coords)
+            self._rasterizer_coords.append(face_coords)
+
             for i in range(len(clipped)-1):
                 a = f"{clipped[i]}"
                 b = f"{clipped[i+1]}"

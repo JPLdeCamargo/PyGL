@@ -1,6 +1,7 @@
 from .window import Window
 from .game_objects.objs_2D.coords2D import Coords2d
 from .game_objects.objs_3D.ABCObject3D import ABCObject3D
+from .rasterizer import Rasterizer
 
 from PyQt5.QtGui     import *
 from PyQt5.QtCore    import *
@@ -29,12 +30,17 @@ class Viewport(QWidget):
         palette.setColor(QPalette.Window, QColor('grey'))
         self.setPalette(palette)
 
+        self.__rasterizer = Rasterizer(Coords2d(max_x, max_y), self.__offset)
+        self.__pixel_vals = {}
+
     # Return a tuple, first = tuple(obj_coords, obj_edges), second = colors list
     def world_to_screen_coords(self):
         viewport_objs = []
         colors = []
         world_objs_coords = self.__window.display_file
         for obj in world_objs_coords:
+            rast_coords = self.__rasterizer.rasterize_obj(obj)
+            self.__update_pixels(rast_coords, obj.color)
 
             # Transforming normalized coords into viewport coords
             edges = []
@@ -76,7 +82,9 @@ class Viewport(QWidget):
         painter = QPainter(self)
         painter.setPen(Qt.black)
 
+
         objs = self.world_to_screen_coords()
+        self.__paint_pixels(painter)
         for i in range(len(objs[0])):
             edges = objs[0][i]
             color = objs[1][i]
@@ -98,9 +106,26 @@ class Viewport(QWidget):
         painter.setPen(Qt.black)
         self.__paint_limits(painter)
 
+    def __paint_pixels(self, painter):
+        painter.setPen(Qt.red)
+        for coord, args in self.__pixel_vals.items():
+            painter.drawPoint(coord[0], coord[1])
+        painter.setPen(Qt.black)
+        self.__pixel_vals = {}
+
+
     def __paint_limits(self, painter):
         x, y = self.__offset.x, self.__offset.y
         painter.drawLine(x, y, self.__max_x - x, y)
         painter.drawLine(self.__max_x - x, y, self.__max_x - x, self.__max_y - y)
         painter.drawLine(self.__max_x - x, self.__max_y - y, x, self.__max_y - y)
         painter.drawLine(x, self.__max_y - y, x, y)
+
+    def __update_pixels(self, new_coords, color):
+        for coord, z in new_coords.items():
+            if coord in self.__pixel_vals:
+                if z < self.__pixel_vals[coord][0]:
+                    self.__pixel_vals[coord] = (z, color)
+            else:
+                self.__pixel_vals[coord] = (z, color)
+

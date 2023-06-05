@@ -17,6 +17,7 @@ class ABCObject3D(ABC):
         self.__normalized_coords = []
 
         self._clipped_coords = []
+        self._rasterizer_coords = []
 
         # Used for calculating normalized coordinates after transformations
         self.__last_normalized_m = None
@@ -29,6 +30,10 @@ class ABCObject3D(ABC):
     @property
     def normalized_coords(self) -> list[Coords3d]:
         return self.__normalized_coords
+
+    @property
+    def rasterizer_coords(self) -> list[Coords3d]:
+        return self._rasterizer_coords
 
     @property
     def clipped_coords(self) -> list[Coords3d]:
@@ -59,7 +64,8 @@ class ABCObject3D(ABC):
             transformed = CgMath2D.matrix_multiply(homogenous, normalized_m)
             x = transformed[0][0]
             y = transformed[0][1]
-            self.__normalized_coords.append(Coords2d(x, y))
+            z = point.z
+            self.__normalized_coords.append(Coords3d(x, y, z))
         
         self.update_clipping()
 
@@ -71,7 +77,7 @@ class ABCObject3D(ABC):
             transformed = CgMath2D.matrix_multiply(homogenous, world_m)
             x = transformed[0][0]/transformed[0][3]
             y = transformed[0][1]/transformed[0][3]
-            z = transformed[0][2]/transformed[0][3]
+            z = transformed[0][2]
 
             self.__world_coords.append(Coords3d(x, y, z))
 
