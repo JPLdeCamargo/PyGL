@@ -51,7 +51,8 @@ class Rasterizer:
 
             if len(v_coords) < 3:
                 continue
-
+            
+            
             traps = self.__get_trapeziums(v_coords)
             for trap in traps:
                 self.rasterize_trapezium(rast_res, trap)
@@ -59,8 +60,12 @@ class Rasterizer:
 
     def rasterize_trapezium(self, rast_res, trap:list[Coords3d]):
         if len(trap) == 3:
-            border_1 = [trap[0], trap[-1]]
-            border_2 = [trap[1], trap[-1]]
+            if round(trap[0].y,4) == round(trap[1].y,4):
+                border_1 = [trap[0], trap[2]]
+                border_2 = [trap[1], trap[2]]
+            else:
+                border_1 = [trap[0], trap[1]]
+                border_2 = [trap[0], trap[2]]
         else:
             border_1 = [trap[0], trap[-2]]
             border_2 = [trap[1], trap[-1]]
@@ -117,15 +122,19 @@ class Rasterizer:
         traps = []
 
         ordered_faces = [(face[i], i) for i in range(len(face))]
-        ordered_faces.sort(key=lambda x:x[0].y)
+        ordered_faces.sort(key=lambda x:(x[0].y ,x[0].x))
+        # i = 0
+        # while(i < len(ordered_faces)-2):
+        #     if ordered_faces[i][0].y == ordered_faces[i+1][0].y == ordered_faces[i][0].y:
+        #         del ordered_faces[i+1]
+        #     i += 1
+        if len(ordered_faces) < 3:
+            return []
         to_pass = False
         crt_trap = [ordered_faces[0]]
         if ordered_faces[0][0].y == ordered_faces[1][0].y:
             to_pass = True
-            if ordered_faces[0][0].x < ordered_faces[1][0].x:
-                crt_trap.append(ordered_faces[1])
-            else:
-                crt_trap.insert(0, ordered_faces[1])
+            crt_trap.append(ordered_faces[1])
             
         for i in range(1, len(face)-1):
             if to_pass:
@@ -133,12 +142,8 @@ class Rasterizer:
                 continue
 
             if ordered_faces[i][0].y == ordered_faces[i+1][0].y:
-                if ordered_faces[i][0].x < ordered_faces[i+1][0].x:
-                    crt_trap.append(ordered_faces[i])
-                    crt_trap.append(ordered_faces[i+1])
-                else:
-                    crt_trap.append(ordered_faces[i+1])
-                    crt_trap.append(ordered_faces[i])
+                crt_trap.append(ordered_faces[i])
+                crt_trap.append(ordered_faces[i+1])
                 to_pass = True
 
             else:
@@ -179,9 +184,10 @@ class Rasterizer:
             if(i > 1):
                 crt_trap.pop(0)
 
-        if ordered_faces[-1][0].y != ordered_faces[-1][0].y:
-            crt_trap.append(face[-1])
-            traps.append(crt_trap)
+        if ordered_faces[-1][0].y != ordered_faces[-2][0].y:
+            crt_trap.append(ordered_faces[-1])
+            to_append = [i[0] for i in crt_trap]
+            traps.append(to_append)
 
         return traps
 
