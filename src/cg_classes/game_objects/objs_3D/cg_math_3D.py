@@ -167,7 +167,7 @@ class CgMath3D:
                     y = -1
                     x = a.x + 1/m * (-1 - a.y)
                     if(active_flags <= 1 or (x >= -1 and x <= 1)):
-                        return Coords2d(x, y)
+                        return Coords3d(x, y, a.z)
                 elif i == 2 and flags[2]: # Right
                     y = m * (1 - a.x) + a.y
                     x = 1

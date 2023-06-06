@@ -85,21 +85,21 @@ class Viewport(QWidget):
 
         objs = self.world_to_screen_coords()
         self.__paint_pixels(painter)
-        for i in range(len(objs[0])):
-            edges = objs[0][i]
-            color = objs[1][i]
-            painter.setPen(QColor(color[0], color[1], color[2]))
-            # point
-            # if len(coords) == 1:
-            #     # Changing pens to make point bigger, instead of only one pixel
-            #     painter.setPen(QPen(Qt.black, 3))
-            #     painter.drawPoint(math.floor(coords[0].x), math.floor(coords[0].y))
-            #     painter.setPen(Qt.black)
-            for edge in edges:
-                painter.drawLine(math.floor(edge[0].x),
-                                math.floor(edge[0].y),
-                                math.floor(edge[1].x),
-                                math.floor(edge[1].y))
+        # for i in range(len(objs[0])):
+        #     edges = objs[0][i]
+        #     color = objs[1][i]
+        #     painter.setPen(QColor(color[0], color[1], color[2]))
+        #     # point
+        #     # if len(coords) == 1:
+        #     #     # Changing pens to make point bigger, instead of only one pixel
+        #     #     painter.setPen(QPen(Qt.black, 3))
+        #     #     painter.drawPoint(math.floor(coords[0].x), math.floor(coords[0].y))
+        #     #     painter.setPen(Qt.black)
+        #     for edge in edges:
+        #         painter.drawLine(math.floor(edge[0].x),
+        #                         math.floor(edge[0].y),
+        #                         math.floor(edge[1].x),
+        #                         math.floor(edge[1].y))
 
 
 
@@ -109,8 +109,8 @@ class Viewport(QWidget):
     def __paint_pixels(self, painter):
         for coord, args in self.__pixel_vals.items():
             z = args[0]
-            color = round((abs(z)/9100) * 255)
-            painter.setPen(QColor(255, color, color))
+            color = round((abs(z)/15000) * 255)
+            painter.setPen(QColor(color, color, color))
             painter.drawPoint(coord[0], coord[1])
         painter.setPen(Qt.black)
         self.__pixel_vals = {}

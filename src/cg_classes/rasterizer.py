@@ -111,7 +111,7 @@ class Rasterizer:
 
     def paint(self, rast_res, point:Coords3d):
         if (point.x, point.y) in rast_res:
-            if(point.z < rast_res[(point.x, point.y)]):
+            if(point.z > rast_res[(point.x, point.y)]):
                 rast_res[(point.x, point.y)] = point.z
         else:
             rast_res[(point.x, point.y)] = point.z
@@ -203,8 +203,10 @@ class Rasterizer:
         return traps
 
     def __get_intercept_y(self, y, x, face):
-        for i in range(len(face)-1):
-            line = [face[i], face[i+1]]
+        face_copy = copy.deepcopy(face)
+        face_copy.append(face_copy[0])
+        for i in range(len(face_copy)-1):
+            line = [face_copy[i], face_copy[i+1]]
             intercept = self.__get_new_coord(y, line)
             if not intercept is None and round(x,5) != round(intercept.x, 5):
                 return intercept
