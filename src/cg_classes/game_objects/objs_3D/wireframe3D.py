@@ -43,7 +43,7 @@ class WireFrame3D(ABCObject3D):
                 face_coords.append(self.normalized_coords[face[i]])
 
             clipped = CgMath3D.shuterland_hodgeman_polygon_clipping(face_coords)
-            self._rasterizer_coords.append(face_coords)
+            self._rasterizer_coords.append(clipped)
 
             for i in range(len(clipped)-1):
                 a = f"{clipped[i]}"

@@ -107,8 +107,10 @@ class Viewport(QWidget):
         self.__paint_limits(painter)
 
     def __paint_pixels(self, painter):
-        painter.setPen(Qt.red)
         for coord, args in self.__pixel_vals.items():
+            z = args[0]
+            color = round((abs(z)/9100) * 255)
+            painter.setPen(QColor(255, color, color))
             painter.drawPoint(coord[0], coord[1])
         painter.setPen(Qt.black)
         self.__pixel_vals = {}

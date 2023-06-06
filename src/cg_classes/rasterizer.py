@@ -35,12 +35,14 @@ class Rasterizer:
         coords = obj.rasterizer_coords
         for face in coords:
             v_coords = [self.__transform_to_viewport(i) for i in face]
+            if len(v_coords)<=2:
+                continue
             v_coords.pop(-1)
             # Remove equals
             done = {}
             i = 0
             while True:
-                crt = (v_coords[i].x, v_coords[i].y)
+                crt = (round(v_coords[i].x,5), round(v_coords[i].y,5))
                 if crt in done:
                     del v_coords[i]
                 else:
@@ -147,35 +149,44 @@ class Rasterizer:
                 to_pass = True
 
             else:
-                if len(crt_trap) == 2:
-                    coord_r = crt_trap[-1][1] + 1 if not crt_trap[-1][1] + 1 == len(face) else 0
-                    coord_l = crt_trap[-2][1] + 1 if not crt_trap[-2][1] + 1 == len(face) else 0
-                else:
-                    coord_r = crt_trap[-1][1] + 1 if not crt_trap[-1][1] + 1 == len(face) else 0
-                    coord_l = crt_trap[-1][1] - 1 if not crt_trap[-1][1] - 1 == len(face) else 0
+                # if len(crt_trap) == 2:
+                #     coord_r = crt_trap[-1][1] + 1 if not crt_trap[-1][1] + 1 == len(face) else 0
+                #     coord_l = crt_trap[-2][1] + 1 if not crt_trap[-2][1] + 1 == len(face) else 0
+                # else:
+                #     coord_r = crt_trap[-1][1] + 1 if not crt_trap[-1][1] + 1 == len(face) else 0
+                #     coord_l = crt_trap[-1][1] - 1 if not crt_trap[-1][1] - 1 == len(face) else 0
 
 
-                line_r = [crt_trap[-1][0], face[coord_r]]
-                line_l = [crt_trap[-1][0], face[coord_l]]
+                # line_r = [crt_trap[-1][0], face[coord_r]]
+                # line_l = [crt_trap[-1][0], face[coord_l]]
 
+                # crt = ordered_faces[i][0]
+                # new_coord_r = self.__get_new_coord(crt, line_r)
+                # new_coord_l = self.__get_new_coord(crt, line_l)
+                # test_r = Coords3d(round(new_coord_r.x), round(new_coord_r.y), round(new_coord_r.z))
+                # if test_r.x == round(crt.x) and test_r.y == round(crt.y) and test_r.z == round(crt.z):
+                #     if ordered_faces[i][0].x < ordered_faces[i+1][0].x:
+                #         crt_trap.append(ordered_faces[i])
+                #         crt_trap.append((new_coord_l, coord_l))
+                #     else:
+                #         crt_trap.append((new_coord_l, coord_l))
+                #         crt_trap.append(ordered_faces[i])
+                # else:
+                #     if ordered_faces[i][0].x < ordered_faces[i+1][0].x:
+                #         crt_trap.append(ordered_faces[i])
+                #         crt_trap.append((new_coord_r, coord_r))
+                #     else:
+                #         crt_trap.append((new_coord_r, coord_r))
+                #         crt_trap.append(ordered_faces[i])
+                
                 crt = ordered_faces[i][0]
-                new_coord_r = self.__get_new_coord(crt, line_r)
-                new_coord_l = self.__get_new_coord(crt, line_l)
-                test_r = Coords3d(round(new_coord_r.x), round(new_coord_r.y), round(new_coord_r.z))
-                if test_r.x == round(crt.x) and test_r.y == round(crt.y) and test_r.z == round(crt.z):
-                    if ordered_faces[i][0].x < ordered_faces[i+1][0].x:
-                        crt_trap.append(ordered_faces[i])
-                        crt_trap.append((new_coord_l, coord_l))
-                    else:
-                        crt_trap.append((new_coord_l, coord_l))
-                        crt_trap.append(ordered_faces[i])
-                else:
-                    if ordered_faces[i][0].x < ordered_faces[i+1][0].x:
-                        crt_trap.append(ordered_faces[i])
-                        crt_trap.append((new_coord_r, coord_r))
-                    else:
-                        crt_trap.append((new_coord_r, coord_r))
-                        crt_trap.append(ordered_faces[i])
+                new_coord = self.__get_intercept_y(crt.y, crt.x, face)
+                if new_coord is None:
+                    print("OH NO")
+                    return []
+                new_pnts = [ordered_faces[i], (new_coord,ordered_faces[i][1])]
+                new_pnts.sort(key=lambda x:x[0].x)
+                crt_trap += new_pnts
 
 
             to_append = [i[0] for i in crt_trap]
@@ -191,21 +202,31 @@ class Rasterizer:
 
         return traps
 
-        
+    def __get_intercept_y(self, y, x, face):
+        for i in range(len(face)-1):
+            line = [face[i], face[i+1]]
+            intercept = self.__get_new_coord(y, line)
+            if not intercept is None and round(x,5) != round(intercept.x, 5):
+                return intercept
 
 
             
 
-    def __get_new_coord(self, point:Coords3d, line:list[Coords3d]) -> Coords3d:
+    def __get_new_coord(self, y:float, line:list[Coords3d]) -> Coords3d:
         a, b = line[0], line[1]
+        if(round(a.y,5) == round(b.y,5)):
+            return
         ax = (b.x - a.x)/(b.y - a.y)
         bx = a.x - (ax * a.y)
-        new_x = point.y * ax + bx
+        new_x = y * ax + bx
 
         az = (b.z - a.z)/(b.y - a.y)
         bz = a.z - (az * a.y)
-        new_z = point.y * az + bz
-        return Coords3d(new_x, point.y, new_z)
+        new_z = y * az + bz
+        coord = Coords3d(new_x, y, new_z) 
+        mn, mx = sorted([a.x, b.x])
+        if(coord.x >= mn and coord.x <= mx):
+            return coord
 
 
         
