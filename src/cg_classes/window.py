@@ -32,7 +32,6 @@ class Window:
         self.__up_vector = Coords3d(0, 1, 0)
         self.__right_vector = Coords3d(1, 0, 0)
         self.__front_vector = Coords3d(0, 0, 1)
-        self.__cop = Coords3d(x_size/2, y_size/2, max(x_size, y_size)*1.3)
 
         self.__ratio = self.__size.x/self.__size.y
 
@@ -41,16 +40,19 @@ class Window:
         for obj in self.__display_file:
             self.__names_map[obj.name] = obj
 
-        d =  self.__cop.z
+        self.__d = max(x_size, y_size)
         self.__perspective_matrix = [[1, 0, 0, 0],
                                      [0, 1, 0, 0],
-                                     [0, 0, 1, 1/d],
+                                     [0, 0, 1, 1/self.__d],
                                      [0, 0, 0, 0]]
 
         # Filling normalized coords of all objects
         self.update_world()
         self.update_normalized()
 
+    @property
+    def distance(self) -> float:
+        return self.__d
         
     @property
     def display_file(self) -> list[ABCObject3D]:
@@ -68,6 +70,10 @@ class Window:
     def front_vector(self) -> Coords3d:
         return self.__front_vector
 
+    @property
+    def center(self) -> Coords3d:
+        return self.__center
+
     def move_x(self, delta:float) -> None:
         scale = self.__size.x
         delta = (delta * scale)/1000
@@ -75,7 +81,6 @@ class Window:
                                 self.__right_vector.y * delta,
                                 self.__right_vector.z * delta)
         self.__center += delta_vector
-        self.__cop += delta_vector
 
         self.update_world()
         self.update_normalized()
@@ -87,7 +92,6 @@ class Window:
                                 self.__up_vector.y * delta,
                                 self.__up_vector.z * delta)
         self.__center += delta_vector
-        self.__cop += delta_vector
 
         self.update_world()
         self.update_normalized()
@@ -105,15 +109,13 @@ class Window:
     #     self.update_world()
     #     self.update_normalized()
     def zoom(self, delta:float):
-        scale = self.__size.y
+        scale = self.__d
         delta = (delta * scale)/1000
         delta_vector = Coords3d(self.__front_vector.x * delta,
                                 self.__front_vector.y * delta,
                                 self.__front_vector.z * delta)
         self.__center += delta_vector
-        self.__cop += delta_vector
         print(self.__center)
-        print(self.__cop)
 
         self.update_world()
         self.update_normalized()
@@ -144,7 +146,6 @@ class Window:
         self.__up_vector = self.__transform_vector(self.__up_vector, rotation_m)
         self.__right_vector = self.__transform_vector(self.__right_vector, rotation_m)
         self.__front_vector = self.__transform_vector(self.__front_vector, rotation_m)
-        self.__cop = self.__transform_vector(self.__cop, rotation_m)
 
         self.update_world()
         self.update_normalized()
@@ -171,7 +172,7 @@ class Window:
         return False
 
     def update_normalized(self):
-        translate_center_m = CgMath2D.get_translation_matrix(-self.__center.x, -self.__center.y)
+        # translate_center_m = CgMath2D.get_translation_matrix(self.__center.x, self.__center.y)
 
         # Normalizing -1, 1
         scale_x = 2/self.__size.x
@@ -180,14 +181,14 @@ class Window:
         # translate_m = CgMath2D.get_translation_matrix(-1, -1)
         # normalization_m = CgMath2D.matrix_multiply(scale_m, translate_m)
 
-        full_normalize_transform = CgMath2D.matrix_multiply(translate_center_m, scale_m)
+        # full_normalize_transform = CgMath2D.matrix_multiply(translate_center_m, scale_m)
 
         for obj in self.__display_file:
-            obj.update_normalized(full_normalize_transform)
+            obj.update_normalized(scale_m)
 
     def update_world(self):
         # to_center = CgMath3D.get_translation_matrix(-self.__center.x, -self.__center.y, -self.__center.z)
-        to_cop = CgMath3D.get_translation_matrix(-self.__cop.x, -self.__cop.y, -self.__cop.z)
+        to_cop = CgMath3D.get_translation_matrix(-self.__center.x, -self.__center.y, -(self.__center.z - self.__d))
 
         # Align rotation vector to zx plane
         angle_to_zy_axis = self.__get_angle(Coords2d(0,1), Coords2d(self.__front_vector.x, self.__front_vector.z))

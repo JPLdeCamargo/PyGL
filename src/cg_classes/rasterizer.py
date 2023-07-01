@@ -1,6 +1,7 @@
 from .game_objects.objs_2D.coords2D import Coords2d
 from .game_objects.objs_3D.coords3D import Coords3d
 from .game_objects.objs_3D.ABCObject3D import ABCObject3D
+from .phong_equations import PhongModel
 
 import math
 import copy
@@ -29,9 +30,10 @@ class Rasterizer:
         unit_y = 1 - ((point.y + 1)/2)
         return Coords2d(unit_x, unit_y)
 
-    def rasterize_obj(self, obj:ABCObject3D):
+    def rasterize_obj(self, obj:ABCObject3D, window_center:Coords3d):
         rast_res = {}
-
+        print("center")
+        print(window_center)
         coords = obj.rasterizer_coords
         for face in coords:
             v_coords = [self.__transform_to_viewport(i) for i in face]
@@ -54,13 +56,14 @@ class Rasterizer:
             if len(v_coords) < 3:
                 continue
             
-            
+            shaded_color = PhongModel.phong_get_color(v_coords, Coords3d(3500,2000,500), window_center, obj.color)
+
             traps = self.__get_trapeziums(v_coords)
             for trap in traps:
-                self.rasterize_trapezium(rast_res, trap)
+                self.rasterize_trapezium(rast_res, trap, shaded_color)
         return rast_res
 
-    def rasterize_trapezium(self, rast_res, trap:list[Coords3d]):
+    def rasterize_trapezium(self, rast_res, trap:list[Coords3d], shaded_color:list[int]):
         if len(trap) == 3:
             if round(trap[0].y,4) == round(trap[1].y,4):
                 border_1 = [trap[0], trap[2]]
@@ -103,18 +106,18 @@ class Rasterizer:
             increment = 1 if x1 < x2 else -1
             x2 += increment
             for j in range(x1, x2, increment):
-                self.paint(rast_res, Coords3d(j, y1, crt_z)) 
+                self.paint(rast_res, Coords3d(j, y1, crt_z), shaded_color) 
                 crt_z += zd
 
 
 
 
-    def paint(self, rast_res, point:Coords3d):
+    def paint(self, rast_res, point:Coords3d, shaded_color:list[int]):
         if (point.x, point.y) in rast_res:
-            if(point.z > rast_res[(point.x, point.y)]):
-                rast_res[(point.x, point.y)] = point.z
+            if(point.z < rast_res[(point.x, point.y)][0]):
+                rast_res[(point.x, point.y)] = (point.z, shaded_color)
         else:
-            rast_res[(point.x, point.y)] = point.z
+            rast_res[(point.x, point.y)] = (point.z, shaded_color)
 
                 
 

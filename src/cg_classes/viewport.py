@@ -39,21 +39,21 @@ class Viewport(QWidget):
         colors = []
         world_objs_coords = self.__window.display_file
         for obj in world_objs_coords:
-            rast_coords = self.__rasterizer.rasterize_obj(obj)
-            self.__update_pixels(rast_coords, obj.color)
+            rast_coords = self.__rasterizer.rasterize_obj(obj, self.__window.center)
+            self.__update_pixels(rast_coords)
 
-            # Transforming normalized coords into viewport coords
-            edges = []
-            colors.append(obj.color)
-            for edge in obj.clipped_coords:
-                transformed = self.__transform_to_viewport(edge)
-                edges.append(transformed)
+            # # Transforming normalized coords into viewport coords
+            # edges = []
+            # colors.append(obj.color)
+            # for edge in obj.clipped_coords:
+            #     transformed = self.__transform_to_viewport(edge)
+            #     edges.append(transformed)
 
-            # if obj.is_closed and len(obj.clipped_coords) > 0:
-            #     transformed = self.__transform_to_viewport(obj.clipped_coords[0])
-            #     viewport_coords.append(transformed)
+            # # if obj.is_closed and len(obj.clipped_coords) > 0:
+            # #     transformed = self.__transform_to_viewport(obj.clipped_coords[0])
+            # #     viewport_coords.append(transformed)
 
-            viewport_objs.append(edges)
+            # viewport_objs.append(edges)
 
         return (viewport_objs, colors)
             
@@ -85,21 +85,21 @@ class Viewport(QWidget):
 
         objs = self.world_to_screen_coords()
         self.__paint_pixels(painter)
-        # for i in range(len(objs[0])):
-        #     edges = objs[0][i]
-        #     color = objs[1][i]
-        #     painter.setPen(QColor(color[0], color[1], color[2]))
-        #     # point
-        #     # if len(coords) == 1:
-        #     #     # Changing pens to make point bigger, instead of only one pixel
-        #     #     painter.setPen(QPen(Qt.black, 3))
-        #     #     painter.drawPoint(math.floor(coords[0].x), math.floor(coords[0].y))
-        #     #     painter.setPen(Qt.black)
-        #     for edge in edges:
-        #         painter.drawLine(math.floor(edge[0].x),
-        #                         math.floor(edge[0].y),
-        #                         math.floor(edge[1].x),
-        #                         math.floor(edge[1].y))
+        for i in range(len(objs[0])):
+            edges = objs[0][i]
+            color = objs[1][i]
+            painter.setPen(QColor(color[0], color[1], color[2]))
+            # point
+            # if len(coords) == 1:
+            #     # Changing pens to make point bigger, instead of only one pixel
+            #     painter.setPen(QPen(Qt.black, 3))
+            #     painter.drawPoint(math.floor(coords[0].x), math.floor(coords[0].y))
+            #     painter.setPen(Qt.black)
+            for edge in edges:
+                painter.drawLine(math.floor(edge[0].x),
+                                math.floor(edge[0].y),
+                                math.floor(edge[1].x),
+                                math.floor(edge[1].y))
 
 
 
@@ -107,10 +107,8 @@ class Viewport(QWidget):
         self.__paint_limits(painter)
 
     def __paint_pixels(self, painter):
-        for coord, args in self.__pixel_vals.items():
-            z = args[0]
-            color = round((abs(z)/15000) * 255)
-            painter.setPen(QColor(color, color, color))
+        for coord, (z, color) in self.__pixel_vals.items():
+            painter.setPen(QColor(int(color[0]), int(color[1]), int(color[2])))
             painter.drawPoint(coord[0], coord[1])
         painter.setPen(Qt.black)
         self.__pixel_vals = {}
@@ -123,8 +121,8 @@ class Viewport(QWidget):
         painter.drawLine(self.__max_x - x, self.__max_y - y, x, self.__max_y - y)
         painter.drawLine(x, self.__max_y - y, x, y)
 
-    def __update_pixels(self, new_coords, color):
-        for coord, z in new_coords.items():
+    def __update_pixels(self, new_coords):
+        for coord, (z, color) in new_coords.items():
             if coord in self.__pixel_vals:
                 if z < self.__pixel_vals[coord][0]:
                     self.__pixel_vals[coord] = (z, color)

@@ -58,6 +58,7 @@ class WavefrontManager:
 
         coords = []
         faces = []
+        color = (0, 0, 0)
         for line in wavefront_lines:
 
             if line[:2] == "v ":
@@ -68,7 +69,9 @@ class WavefrontManager:
                 l = line[2:]
                 face = tuple([int(i.split("/")[0])-1 for i in (l.split())])
                 faces.append(face)
+            if line[:2] == "c ":
+                color = tuple([int(i) for i in line.split()[1:]])
         
-        return WireFrame3D(name, faces, coords)
+        return WireFrame3D(name, faces, coords, color)
                     
 

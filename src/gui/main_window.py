@@ -109,11 +109,11 @@ class MainWindow(QWidget):
         self.__viewport.update()
 
     def clicked_plus(self):
-        self.__window.zoom(-100)
+        self.__window.zoom(100)
         self.__viewport.update()
 
     def clicked_minus(self):
-        self.__window.zoom(100)
+        self.__window.zoom(-100)
         self.__viewport.update()
 
     def create_obj(self):
