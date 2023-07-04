@@ -47,6 +47,7 @@ class Window:
                                      [0, 0, 0, 0]]
 
         # Filling normalized coords of all objects
+        self.light_loc = Coords3d(7000,7000,0)
         self.update_world()
         self.update_normalized()
 
@@ -143,9 +144,10 @@ class Window:
         rotation_m = CgMath3D.matrix_multiply(rotation_m, redo_y)
         rotation_m = CgMath3D.matrix_multiply(rotation_m, redo_xy)
         
-        self.__up_vector = self.__transform_vector(self.__up_vector, rotation_m)
-        self.__right_vector = self.__transform_vector(self.__right_vector, rotation_m)
-        self.__front_vector = self.__transform_vector(self.__front_vector, rotation_m)
+        # self.__up_vector = self.__transform_vector(self.__up_vector, rotation_m)
+        # self.__right_vector = self.__transform_vector(self.__right_vector, rotation_m)
+        # self.__front_vector = self.__transform_vector(self.__front_vector, rotation_m)
+        self.light_loc = self.__transform_vector(self.light_loc, rotation_m)
 
         self.update_world()
         self.update_normalized()

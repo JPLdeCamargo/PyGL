@@ -33,7 +33,11 @@ class PhongModel:
 
         difuse_color = (color[0]*i_dif, color[1]*i_dif, color[2]*i_dif)
 
-        i_espc = PhongModel.__especular(norm_obser, norm_light)
+        # Calculando vetor H, para nao calcular vetor dp reflexo
+        h_vec = norm_light + norm_obser
+        h_vec = h_vec / 2
+
+        i_espc = PhongModel.__especular(normal_surf, h_vec)
 
         especular_color = tuple([255 * i_espc] * 3)
 
@@ -48,7 +52,7 @@ class PhongModel:
                 color_sum[i] = 255
 
 
-        return color_sum
+        return tuple(color_sum)
 
 
     @staticmethod
@@ -57,8 +61,8 @@ class PhongModel:
         return i_dif
 
     @staticmethod
-    def __especular(norm_obs:np.ndarray, norm_light:np.ndarray):
-        i_dif = 3 * 1 * pow(np.dot(norm_light, norm_obs),100)
+    def __especular(norm_surf:np.ndarray, h_vec:np.ndarray):
+        i_dif = 1 * 2 * pow(np.dot(norm_surf, h_vec),3)
         return i_dif
 
     @staticmethod

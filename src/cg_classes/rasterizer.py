@@ -30,7 +30,7 @@ class Rasterizer:
         unit_y = 1 - ((point.y + 1)/2)
         return Coords2d(unit_x, unit_y)
 
-    def rasterize_obj(self, obj:ABCObject3D, window_center:Coords3d):
+    def rasterize_obj(self, obj:ABCObject3D, window_center:Coords3d, light_loc:Coords3d):
         rast_res = {}
         print("center")
         print(window_center)
@@ -56,7 +56,7 @@ class Rasterizer:
             if len(v_coords) < 3:
                 continue
             
-            shaded_color = PhongModel.phong_get_color(v_coords, Coords3d(3500,2000,500), window_center, obj.color)
+            shaded_color = PhongModel.phong_get_color(v_coords, light_loc, window_center, obj.color)
 
             traps = self.__get_trapeziums(v_coords)
             for trap in traps:
@@ -128,11 +128,6 @@ class Rasterizer:
 
         ordered_faces = [(face[i], i) for i in range(len(face))]
         ordered_faces.sort(key=lambda x:(x[0].y ,x[0].x))
-        # i = 0
-        # while(i < len(ordered_faces)-2):
-        #     if ordered_faces[i][0].y == ordered_faces[i+1][0].y == ordered_faces[i][0].y:
-        #         del ordered_faces[i+1]
-        #     i += 1
         if len(ordered_faces) < 3:
             return []
         to_pass = False
@@ -152,36 +147,6 @@ class Rasterizer:
                 to_pass = True
 
             else:
-                # if len(crt_trap) == 2:
-                #     coord_r = crt_trap[-1][1] + 1 if not crt_trap[-1][1] + 1 == len(face) else 0
-                #     coord_l = crt_trap[-2][1] + 1 if not crt_trap[-2][1] + 1 == len(face) else 0
-                # else:
-                #     coord_r = crt_trap[-1][1] + 1 if not crt_trap[-1][1] + 1 == len(face) else 0
-                #     coord_l = crt_trap[-1][1] - 1 if not crt_trap[-1][1] - 1 == len(face) else 0
-
-
-                # line_r = [crt_trap[-1][0], face[coord_r]]
-                # line_l = [crt_trap[-1][0], face[coord_l]]
-
-                # crt = ordered_faces[i][0]
-                # new_coord_r = self.__get_new_coord(crt, line_r)
-                # new_coord_l = self.__get_new_coord(crt, line_l)
-                # test_r = Coords3d(round(new_coord_r.x), round(new_coord_r.y), round(new_coord_r.z))
-                # if test_r.x == round(crt.x) and test_r.y == round(crt.y) and test_r.z == round(crt.z):
-                #     if ordered_faces[i][0].x < ordered_faces[i+1][0].x:
-                #         crt_trap.append(ordered_faces[i])
-                #         crt_trap.append((new_coord_l, coord_l))
-                #     else:
-                #         crt_trap.append((new_coord_l, coord_l))
-                #         crt_trap.append(ordered_faces[i])
-                # else:
-                #     if ordered_faces[i][0].x < ordered_faces[i+1][0].x:
-                #         crt_trap.append(ordered_faces[i])
-                #         crt_trap.append((new_coord_r, coord_r))
-                #     else:
-                #         crt_trap.append((new_coord_r, coord_r))
-                #         crt_trap.append(ordered_faces[i])
-                
                 crt = ordered_faces[i][0]
                 new_coord = self.__get_intercept_y(crt.y, crt.x, face)
                 if new_coord is None:

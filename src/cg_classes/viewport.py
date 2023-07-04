@@ -39,7 +39,7 @@ class Viewport(QWidget):
         colors = []
         world_objs_coords = self.__window.display_file
         for obj in world_objs_coords:
-            rast_coords = self.__rasterizer.rasterize_obj(obj, self.__window.center)
+            rast_coords = self.__rasterizer.rasterize_obj(obj, self.__window.center, self.__window.light_loc)
             self.__update_pixels(rast_coords)
 
             # # Transforming normalized coords into viewport coords
