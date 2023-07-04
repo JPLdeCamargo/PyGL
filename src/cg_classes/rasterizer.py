@@ -85,8 +85,8 @@ class Rasterizer:
             x1, y1, z1 = border[0].x, border[0].y, border[0].z
             xd = ((x2-x1)/(y2-y1))
             zd = ((z2-z1)/(y2-y1))
-            crt_point = Coords3d(x2+xd, math.floor(y2), z2+zd)
-            for i in range(math.floor(y2), math.ceil(y1), -1):
+            crt_point = Coords3d(x2, math.floor(y2), z2)
+            for i in range(math.floor(y2), math.floor(y1), -1):
                 pixel_x = math.floor(crt_point.x)
                 pixel_coord = Coords3d(pixel_x, crt_point.y, crt_point.z)
                 pixel_border.append(pixel_coord)
