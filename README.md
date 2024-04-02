@@ -1,5 +1,5 @@
 # PyGL
-Final project of INE5420 - Computer Graphics
+Final project for INE5420 - Computer Graphics
 
 ## Dependencies
 ```shell
